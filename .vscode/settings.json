@@ -1,0 +1,9 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\jlzav\\Downloads\\json-simple-1.1.1.jar",
+        "Jar/json-simple-1.1.1.jar",
+        "Jar/flatlaf-3.2.5.jar",
+        "Jar/jcalendar-1.4.jar"
+    ]
+}
