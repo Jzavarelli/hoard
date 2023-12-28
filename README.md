@@ -2,7 +2,7 @@
 ### Developer: Jace L. Zavarelli
 ### Company: ZA Entertainment L.L.C
 
-> Prelude<br />
+Prelude<br />
 The below git code is to do a fresh install of the repository and how to do continuous pushes that involve proper `full-messaged` commits. 
 
 > Git Fresh Install
@@ -23,7 +23,7 @@ git commit -m "<full-body message>"
 git push origin main
 ```
 
-> Repository Purpose<br />
+Repository Purpose<br />
 The following developments are for personal use and exist under the intellectual ownership of Jace Zavarelli and ZA Entertainment LLC. The developments are focused on multiple languages that help to highlight the programming abilities of the developer. The developments implement databases, JSON, UML, design processes, object-oriented structures, theoretical optimizations, and much more computer science developments.
 
 > [!NOTE]
