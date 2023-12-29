@@ -1,7 +1,7 @@
 /*
  * Developer -   Jace L. Zavarelli
  * Company   -   Z.A. Entertainment LLC.
- * Project   -   Game Archiver
+ * Project   -   Game Archiver :: Video Game Object
  * 
  */
 

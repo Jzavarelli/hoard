@@ -1,7 +1,7 @@
 /*
  * Developer -   Jace L. Zavarelli
  * Company   -   Z.A. Entertainment LLC.
- * Project   -   Game Archiver
+ * Project   -   Game Archiver :: Core Class
  * 
  * Description:
  * A project for logging and recording the most recent games
@@ -23,12 +23,8 @@ import com.formdev.flatlaf.FlatLightLaf;
 
 public class GameHub extends VideoGame
 {
-    // // Label Final Variables
-    private final static String TITLE_FIELD = "TITLE:";
-    private final static String DEV_FIELD   = "DEVELOPER'S:";
-    private final static String DATE_FIELD  = "DATE:";
-    private final static String PLATF_FIELD = "PLATFORM:";
-    private final static String BEAT_FIELD  = "TIMES_BEATEN:";
+    // // Global Parameters
+
 
     // Constructor
     public GameHub() { }
@@ -40,38 +36,46 @@ public class GameHub extends VideoGame
     // }
 
     // Loader -- Used to load new Linked List Title Entry into Loader, used every time a game is added. 
-    public static void loader()
-    {
+    // public static void loader()
+    // {
 
-    }
+    // }
 
-    public static void refreshList(LinkedList<VideoGame> games_list, DefaultTableModel table_model)
+    public static void refreshList(LinkedList<VideoGame> games_list, JTable games_table)
     {
-        Object[] row;
-        for (int r = 0; r <= games_list.size(); r++)
+        //String[] col_names = {"Title", "Platform", "Beaten", "Times Beaten", "Currently Playing", "Favorite"};
+        Object row_items[] = new Object[6];
+        DefaultTableModel model = (DefaultTableModel) games_table.getModel();
+
+        if (model.getRowCount() == 0 && !games_list.isEmpty())
         {
-            if (table_model.getRowCount() <= 0)
-            {
-                                row = new Object[4];
-                row[0] = games_list.get(r).getTitle();
-                row[1] = games_list.get(r).getPlatform();
-                row[2] = games_list.get(r).getBeat();
-                row[3] = games_list.get(r).getTimesBeaten();
+            row_items[0] = games_list.get(0).getTitle();
+            row_items[1] = games_list.get(0).getPlatform();
+            row_items[2] = games_list.get(0).getBeat();
+            row_items[3] = games_list.get(0).getTimesBeaten();
+            row_items[4] = games_list.get(0).getCurrentGame();
+            row_items[5] = games_list.get(0).getFavorite();
 
-                table_model.addRow(row);
-            }
-            else if (games_list.get(r).getTitle().equals(table_model.getValueAt(r, 0)))
-            {
-                row = new Object[4];
-                row[0] = games_list.get(r).getTitle();
-                row[1] = games_list.get(r).getPlatform();
-                row[2] = games_list.get(r).getBeat();
-                row[3] = games_list.get(r).getTimesBeaten();
+            model.addRow(row_items);
+        }
+        
 
-                table_model.addRow(row);
+        if (model.getRowCount() > 0)
+        {
+            for(int i = model.getRowCount(); i < games_list.size(); i++)
+            {
+
+                row_items[0] = games_list.get(i).getTitle();
+                row_items[1] = games_list.get(i).getPlatform();
+                row_items[2] = games_list.get(i).getBeat();
+                row_items[3] = games_list.get(i).getTimesBeaten();
+                row_items[4] = games_list.get(i).getCurrentGame();
+                row_items[5] = games_list.get(i).getFavorite();
+
+                model.addRow(row_items);
+                row_items = new Object[6];
             }
         }
-
     }
 
     // Main Method
@@ -129,7 +133,6 @@ public class GameHub extends VideoGame
         table_core.addColumn(col_names[5]);
 
         JTable gameTable = new JTable(table_core);
-        gameTable.setColumnSelectionAllowed(false);
         
         JScrollPane scrollView = new JScrollPane(gameTable);
 
@@ -137,7 +140,6 @@ public class GameHub extends VideoGame
         JButton addButton = new JButton("Add Game");
         addButton.addActionListener(e ->
         {
-            
             VideoGame newGame = new VideoGame();
             new AddGame(newGame);
 
@@ -145,21 +147,51 @@ public class GameHub extends VideoGame
         });
 
         JButton editButton = new JButton("Edit Game");
-        // editButton.addActionListener(e ->
-        // {
-        // });
+        editButton.addActionListener(e ->
+        {
+            if (gameTable.getRowCount() == 0 || gameTable.getSelectionModel().isSelectionEmpty() == true)
+            {
+                JOptionPane.showMessageDialog(editButton, "Please select an item to edit, in a non-empty table.", "Warning", 0);
+            }
+            else
+            {
+                new EditGame(game_titles.get(gameTable.getSelectedRow()));
+            }
+        });
 
         JButton deleteButton = new JButton("Delete Game");
-        // deleteButton.addActionListener(e ->
-        // {
-        // });
+        deleteButton.addActionListener(e ->
+        {
+            int row_selected = gameTable.getSelectedRow();
+
+            if (gameTable.getRowCount() == 0 || gameTable.getSelectionModel().isSelectionEmpty() == true)
+            {
+                JOptionPane.showMessageDialog(deleteButton, "Please do not try to delete in an empty table.", "Warning", 0);
+            }
+            else
+            {
+                game_titles.remove(row_selected);
+
+                DefaultTableModel model = (DefaultTableModel) gameTable.getModel();
+                model.removeRow(row_selected);
+                refreshList(game_titles, gameTable);
+            }
+
+            gameFrame.revalidate();
+            gameFrame.repaint();
+        });
 
         JButton refreshButton = new JButton("Refresh List");
         refreshButton.addActionListener(e ->
         {
-            DefaultTableModel model = (DefaultTableModel) gameTable.getModel();
-            refreshList(game_titles, model);
-            gameTable.setModel(model);
+            if (game_titles.isEmpty())
+            {
+                JOptionPane.showMessageDialog(refreshButton, "Please add game title before refresh.", "Warning", 0);
+            }
+            else
+            {
+                refreshList(game_titles, gameTable);
+            }
 
             
             gameFrame.revalidate();

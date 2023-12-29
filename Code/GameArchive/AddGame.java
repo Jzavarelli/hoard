@@ -1,7 +1,7 @@
 /*
  * Developer -   Jace L. Zavarelli
  * Company   -   Z.A. Entertainment LLC.
- * Project   -   Game Archiver
+ * Project   -   Game Archiver :: Add Class
  * 
  */
 
@@ -24,10 +24,10 @@ public class AddGame extends VideoGame
     boolean faveBool = false;
     boolean currBool = false;
 
-
+    // Constructor
     public AddGame() {}
 
-    // Constructor
+    // Parameter Constructor
     public AddGame(VideoGame newGame) 
     { 
         // Initialize Object
@@ -35,7 +35,6 @@ public class AddGame extends VideoGame
 
         // Build Frame
         JFrame addFrame = new JFrame("Add Game");
-        addFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addFrame.setLocation(750, 175);
         addFrame.setResizable(false);
         addFrame.setSize(250, 500);
@@ -75,8 +74,8 @@ public class AddGame extends VideoGame
         JLabel favoriteLabel = new JLabel("Favorite:");
         JCheckBox faveBox = new JCheckBox();
 
-        // JLabel currentLabel = new JLabel("Current:");
-        // JCheckBox currBox = new JCheckBox();
+        JLabel currentLabel = new JLabel("Current:");
+        JCheckBox currBox = new JCheckBox();
 
         JButton addButton = new JButton("Add");
         JButton clearButton = new JButton("Clear Fields");
@@ -99,6 +98,9 @@ public class AddGame extends VideoGame
 
         addPanel.add(favoriteLabel);
         addPanel.add(faveBox);
+
+        addPanel.add(currentLabel);
+        addPanel.add(currBox);
 
         addPanel.add(addButton);
         addPanel.add(clearButton);
@@ -143,13 +145,25 @@ public class AddGame extends VideoGame
             }
         });
 
+        currBox.addItemListener(e ->
+        {
+            if (currBox.isSelected())
+            {
+                currBool = true;
+            }
+            else if (!currBox.isSelected())
+            {
+                currBool = false;
+            }
+        });
+
         addButton.addActionListener(e ->
         {
             // Variables - Date
             SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-YYYY");
 
             // Variables - Publisher / Developer
-            String indDevHold = devField.getText();
+            String indDevHold = devField.getText(); 
             String indPubHold = pubField.getText();
             LinkedList<String> devHold = new LinkedList<String>();
             LinkedList<String> pubHold = new LinkedList<String>();
@@ -205,6 +219,8 @@ public class AddGame extends VideoGame
             }
 
             Date selectedDate = dateCalendar.getDate();
+            //System.out.println("-- " + titleHold + ", " + devHold + ", " + pubHold + ", " + formatter.format(selectedDate) + ", " + platformHold + ", " 
+            //                        + timesbeatHold + ", " + beatBool + ", " + faveBool + ", " + currBool + " --");
             New_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool);
             addFrame.dispose();
         });
