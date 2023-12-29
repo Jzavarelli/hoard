@@ -17,29 +17,24 @@ import javax.swing.table.DefaultTableModel;
 
 import java.util.*;
 import java.awt.*;
+import java.awt.event.*;
+import javax.swing.Timer;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 
 import org.json.simple.JSONObject;
+
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
 public class GameHub extends VideoGame
 {
     // // Global Parameters
+    static JFrame gameFrame = new JFrame("Game Archiver");
 
 
     // Constructor
     public GameHub() { }
-
-    // // Initializer -- Used to load the Linked List from the JSON file, also used to reinitialize after each added item to JSON.
-    // public static LinkedList<VideoGame> initializer(LinkedList<VideoGame> game_titles)
-    // {
-    //     return game_titles;
-    // }
-
-    // Loader -- Used to load new Linked List Title Entry into Loader, used every time a game is added. 
-    // public static void loader()
-    // {
-
-    // }
 
     public static void refreshList(LinkedList<VideoGame> games_list, JTable games_table)
     {
@@ -49,6 +44,7 @@ public class GameHub extends VideoGame
 
         if (model.getRowCount() == 0 && !games_list.isEmpty())
         {
+            System.out.println("New Item");
             row_items[0] = games_list.get(0).getTitle();
             row_items[1] = games_list.get(0).getPlatform();
             row_items[2] = games_list.get(0).getBeat();
@@ -76,29 +72,30 @@ public class GameHub extends VideoGame
                 row_items = new Object[6];
             }
         }
+        
+        gameFrame.revalidate();
+        gameFrame.repaint();
     }
 
     // Main Method
-    public static void main(String[] args)
+    public static void main(String[] args) throws Exception
     {
-        // LaF Initialization
+        // LaF Pre-Initialization
         try 
         {
-            UIManager.setLookAndFeel( new FlatLightLaf() );
-
-        } catch( Exception ex ) 
+            UIManager.setLookAndFeel( new FlatDarkLaf() );
+        } 
+        catch( Exception ex ) 
         {
             System.err.println( "Failed to initialize LaF" );
         }
 
-        // List Initialized
+        // Variable Initialized
+        StringBuilder strBuild = new StringBuilder();
         LinkedList<VideoGame> game_titles = new LinkedList<VideoGame>();
-        //game_titles = initializer(game_titles);
 
         // Build Frame
-        JFrame gameFrame = new JFrame("Game Archiver");
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         gameFrame.setLocation(500, 150);
         gameFrame.setResizable(false);
         gameFrame.setSize(1000, 750);
@@ -111,17 +108,79 @@ public class GameHub extends VideoGame
         menBar.add(item2);
 
         JMenuItem item1Open = new JMenuItem("Open");
+        JFileChooser fileOpen = new JFileChooser();
+        fileOpen.setFileFilter(new FileNameExtensionFilter("Only .json files", "json", "JSON"));
         JMenuItem item1Save = new JMenuItem("Save As...");
+
+        // File Initializer
         item1.add(item1Open);
+        item1Open.addActionListener(e ->
+        {
+            fileOpen.setDialogTitle("Select a JSON archive file");
+            int approval_opt = fileOpen.showOpenDialog(null);
+            if (approval_opt == JFileChooser.APPROVE_OPTION)
+            {
+                String filePath = fileOpen.getSelectedFile().getAbsolutePath();
+
+            }
+            else
+            {
+                System.out.println("User Canceled File Opening");
+            }
+        });
+
         item1.add(item1Save);
+        item1Save.addActionListener(e ->
+        {
+            fileOpen.setDialogTitle("Save as a JSON archive file");
+            int approval_opt = fileOpen.showSaveDialog(null);
+            if (approval_opt == JFileChooser.APPROVE_OPTION)
+            {
+                strBuild.append(fileOpen.getSelectedFile().getAbsolutePath());
+                strBuild.append(".json");
+                System.out.println(strBuild.toString());
+            }
+            else
+            {
+                System.out.println("User Canceled Save Option");
+            }
+        });
 
         JMenuItem item2Light = new JMenuItem("Light Theme");
         JMenuItem item2Dark = new JMenuItem("Dark Theme");
+
+        // LaF Initializer 
         item2.add(item2Light);
+        item2Light.addActionListener(e -> 
+        {
+            try 
+            {
+                System.out.println("Light Theme");
+                UIManager.setLookAndFeel( new FlatLightLaf() );
+            } 
+            catch( Exception ex ) 
+            {
+                System.err.println( "Failed to initialize LaF" );
+            }
+        });
+
         item2.add(item2Dark);
+        item2Dark.addActionListener(e -> 
+        {
+            try 
+            {
+                System.out.println("Dark Theme");
+                UIManager.setLookAndFeel( new FlatDarkLaf() );
+            } 
+            catch( Exception ex ) 
+            {
+                System.err.println( "Failed to initialize LaF" );
+            }
+        });
 
         // Build Panel
         JPanel gameViewPanel = new JPanel();
+        JPanel gamePanel = new JPanel();
 
         String[] col_names = {"Title", "Platform", "Beaten", "Times Beaten", "Currently Playing", "Favorite"};
         DefaultTableModel table_core = new DefaultTableModel();
@@ -133,25 +192,23 @@ public class GameHub extends VideoGame
         table_core.addColumn(col_names[5]);
 
         JTable gameTable = new JTable(table_core);
-        
         JScrollPane scrollView = new JScrollPane(gameTable);
 
-        JPanel gamePanel = new JPanel();
+        // Add Button
         JButton addButton = new JButton("Add Game");
         addButton.addActionListener(e ->
         {
             VideoGame newGame = new VideoGame();
-            new AddGame(newGame);
-
-            game_titles.add(newGame);
+            new AddGame(newGame, game_titles);
         });
 
+        // Edit Button
         JButton editButton = new JButton("Edit Game");
         editButton.addActionListener(e ->
         {
             if (gameTable.getRowCount() == 0 || gameTable.getSelectionModel().isSelectionEmpty() == true)
             {
-                JOptionPane.showMessageDialog(editButton, "Please select an item to edit, in a non-empty table.", "Warning", 0);
+                JOptionPane.showMessageDialog(editButton, "Please SELECT an item to EDIT, in a NON_EMPTY TABLE.", "Warning", 0);
             }
             else
             {
@@ -159,6 +216,7 @@ public class GameHub extends VideoGame
             }
         });
 
+        // Delete Button
         JButton deleteButton = new JButton("Delete Game");
         deleteButton.addActionListener(e ->
         {
@@ -166,7 +224,7 @@ public class GameHub extends VideoGame
 
             if (gameTable.getRowCount() == 0 || gameTable.getSelectionModel().isSelectionEmpty() == true)
             {
-                JOptionPane.showMessageDialog(deleteButton, "Please do not try to delete in an empty table.", "Warning", 0);
+                JOptionPane.showMessageDialog(deleteButton, "Please SELECT an item to DELETE, in a NON_EMPTY TABLE.", "Warning", 0);
             }
             else
             {
@@ -174,32 +232,10 @@ public class GameHub extends VideoGame
 
                 DefaultTableModel model = (DefaultTableModel) gameTable.getModel();
                 model.removeRow(row_selected);
-                refreshList(game_titles, gameTable);
             }
-
-            gameFrame.revalidate();
-            gameFrame.repaint();
-        });
-
-        JButton refreshButton = new JButton("Refresh List");
-        refreshButton.addActionListener(e ->
-        {
-            if (game_titles.isEmpty())
-            {
-                JOptionPane.showMessageDialog(refreshButton, "Please add game title before refresh.", "Warning", 0);
-            }
-            else
-            {
-                refreshList(game_titles, gameTable);
-            }
-
-            
-            gameFrame.revalidate();
-            gameFrame.repaint();
         });
 
         gameViewPanel.add(scrollView);
-        gamePanel.add(refreshButton);
         gamePanel.add(addButton);
         gamePanel.add(editButton);
         gamePanel.add(deleteButton);
@@ -210,5 +246,17 @@ public class GameHub extends VideoGame
         gameFrame.getContentPane().add(BorderLayout.NORTH, menBar);
         gameFrame.setVisible(true);
 
+        // Refresh Page Every Second
+        ActionListener refresher = new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent evt)
+            {
+                refreshList(game_titles, gameTable);
+            }
+        };
+
+        Timer timer = new Timer(1000, refresher);
+        timer.setRepeats(true);
+        timer.start();
     }
 }

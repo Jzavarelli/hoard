@@ -28,7 +28,7 @@ public class AddGame extends VideoGame
     public AddGame() {}
 
     // Parameter Constructor
-    public AddGame(VideoGame newGame) 
+    public AddGame(VideoGame newGame, LinkedList<VideoGame> games_list) 
     { 
         // Initialize Object
         New_Game = newGame;
@@ -222,6 +222,7 @@ public class AddGame extends VideoGame
             //System.out.println("-- " + titleHold + ", " + devHold + ", " + pubHold + ", " + formatter.format(selectedDate) + ", " + platformHold + ", " 
             //                        + timesbeatHold + ", " + beatBool + ", " + faveBool + ", " + currBool + " --");
             New_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool);
+            games_list.add(New_Game);
             addFrame.dispose();
         });
 
