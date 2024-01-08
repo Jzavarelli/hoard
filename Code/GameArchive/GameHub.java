@@ -18,10 +18,15 @@ import javax.swing.table.DefaultTableModel;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javax.swing.Timer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -31,7 +36,6 @@ public class GameHub extends VideoGame
 {
     // // Global Parameters
     static JFrame gameFrame = new JFrame("Game Archiver");
-
 
     // Constructor
     public GameHub() { }
@@ -44,7 +48,7 @@ public class GameHub extends VideoGame
 
         if (model.getRowCount() == 0 && !games_list.isEmpty())
         {
-            System.out.println("New Item");
+            //System.out.println("New Item");
             row_items[0] = games_list.get(0).getTitle();
             row_items[1] = games_list.get(0).getPlatform();
             row_items[2] = games_list.get(0).getBeat();
@@ -60,7 +64,6 @@ public class GameHub extends VideoGame
         {
             for(int i = model.getRowCount(); i < games_list.size(); i++)
             {
-
                 row_items[0] = games_list.get(i).getTitle();
                 row_items[1] = games_list.get(i).getPlatform();
                 row_items[2] = games_list.get(i).getBeat();
@@ -78,12 +81,13 @@ public class GameHub extends VideoGame
     }
 
     // Main Method
+    @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception
     {
         // LaF Pre-Initialization
         try 
         {
-            UIManager.setLookAndFeel( new FlatDarkLaf() );
+            UIManager.setLookAndFeel( new FlatLightLaf() );
         } 
         catch( Exception ex ) 
         {
@@ -132,13 +136,44 @@ public class GameHub extends VideoGame
         item1.add(item1Save);
         item1Save.addActionListener(e ->
         {
+            JSONObject obj = new JSONObject();
+            JSONArray games = new JSONArray();
+            for (int i = 0; i < game_titles.size(); i++)
+            {
+                JSONObject gameObj = new JSONObject();
+                gameObj.put("Title", game_titles.get(i).getTitle());
+                gameObj.put("Release Date", game_titles.get(i).getDate().toString());
+                gameObj.put("Platform", game_titles.get(i).getPlatform());
+                gameObj.put("Developer(s)", game_titles.get(i).getDevelopers());
+                gameObj.put("Publisher(s)", game_titles.get(i).getPublishers());
+                gameObj.put("Beat", game_titles.get(i).getBeat());
+                gameObj.put("Times Beat", game_titles.get(i).getTimesBeaten());
+                gameObj.put("Favorite", game_titles.get(i).getFavorite());
+                gameObj.put("Current", game_titles.get(i).getCurrentGame());
+
+                games.add(gameObj);
+            }
+
+            obj.put("Games", games);
+
             fileOpen.setDialogTitle("Save as a JSON archive file");
+            fileOpen.setCurrentDirectory(new File(".\\"));
             int approval_opt = fileOpen.showSaveDialog(null);
             if (approval_opt == JFileChooser.APPROVE_OPTION)
             {
                 strBuild.append(fileOpen.getSelectedFile().getAbsolutePath());
-                strBuild.append(".json");
-                System.out.println(strBuild.toString());
+                strBuild.append(".json");    
+                try
+                {
+                    FileWriter fileToWrite = new FileWriter(strBuild.toString());
+                    fileToWrite.write(obj.toJSONString());
+                    fileToWrite.flush();
+                    fileToWrite.close();
+                }
+                catch (IOException ex)
+                {
+                    ex.printStackTrace();
+                }
             }
             else
             {
