@@ -7,6 +7,7 @@
 
 // GUI Library
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JCalendar;
 
@@ -18,19 +19,25 @@ public class EditGame extends VideoGame
 {
     // Global Variables
     VideoGame Edit_Game = new VideoGame();
+    boolean beatBool = false;
+    boolean faveBool = false;
+    boolean currBool = false;
+
+    String devString = "";
+    String pubString = "";
+    String[] platform_list = {
+        "PC", "PSP", "PSP Vita", "Playstation 1", "Playstation 2", "Playstation 3", 
+        "Playstation 4", "Playstation 5", "Xbox Original", "Xbox 360", "Xbox One",
+        "Xbox Series X", "NES", "GameBoy", "SNES", "Nintendo 64", "GameCube",
+        "DS", "Wii", "Wii-U", "3DS", "Nintendo Switch" };
 
     // Constructor
     public EditGame() { }
 
     // Parameter Constructor
-    public EditGame(VideoGame editGame) 
+    public EditGame(VideoGame editGame, LinkedList<VideoGame> games_list, int index, DefaultTableModel tableModel) 
     {
         // Init Object / Variables
-        String[] platform_list = {
-            "PC", "PSP", "PSP Vita", "Playstation 1", "Playstation 2", "Playstation 3", 
-            "Playstation 4", "Playstation 5", "Xbox Original", "Xbox 360", "Xbox One",
-            "Xbox Series X", "NES", "GameBoy", "SNES", "Nintendo 64", "GameCube",
-            "DS", "Wii", "Wii-U", "3DS", "Nintendo Switch" };
         Edit_Game = editGame;
 
         // Build Frame
@@ -67,7 +74,31 @@ public class EditGame extends VideoGame
         JTextField titleField = new JTextField(15);
         titleField.setText(editGame.getTitle());
         JTextField devField = new JTextField(15);
+        for (int j = 0; j < editGame.getDevelopers().size(); j++)
+        {
+            if (j == editGame.getDevelopers().size() - 1)
+            {
+                devString += (editGame.getDevelopers().get(j));
+            }
+            else
+            {
+                devString += (editGame.getDevelopers().get(j)+ ", ");
+            }
+        }
+        devField.setText(devString);
         JTextField pubField = new JTextField(15);
+        for (int k = 0; k < editGame.getDevelopers().size(); k++)
+        {
+            if (k == editGame.getPublishers().size() - 1)
+            {
+                pubString += (editGame.getPublishers().get(k));
+            }
+            else
+            {
+                pubString += (editGame.getPublishers().get(k) + ", ");
+            }
+        }
+        pubField.setText(pubString);
         JTextField timesBeatField = new JTextField(15);
         timesBeatField.setText(Integer.toString(editGame.getTimesBeaten()));
 
@@ -199,18 +230,134 @@ public class EditGame extends VideoGame
         grid.insets = new Insets(2, 5, 20, 5);;
         editPane.add(saveButton, grid);
 
+        // Box Listeners
+        beatBox.addItemListener(e ->
+        {
+            if (timesBeatField.isEnabled())
+            {
+                beatBool = false;
+                timesBeatField.setEnabled(false);
+            }
+            else if (!timesBeatField.isEnabled())
+            {
+                beatBool = true;
+                timesBeatField.setEnabled(true);
+            }
+        });
+        faveBox.addItemListener(e ->
+        {
+            if (faveBox.isSelected())
+            {
+                faveBool = true;
+            }
+            else if (!faveBox.isSelected())
+            {
+                faveBool = false;
+            }
+        });
+        currBox.addItemListener(e ->
+        {
+            if (currBox.isSelected())
+            {
+                currBool = true;
+            }
+            else if (!currBox.isSelected())
+            {
+                currBool = false;
+            }
+        });
+
+
         // Button Listeners
         backButton.addActionListener(e ->
         {
             editFrame.dispose();
         });
-        saveButton.addActionListener(e ->
-        {
-
-        });
         clearButton.addActionListener(e ->
         {
+            titleField.setText(editGame.getTitle());
+            devField.setText(devString); 
+            pubField.setText(pubString);
+            timesBeatField.setText(Integer.toString(editGame.getTimesBeaten()));    
+            
+            faveBox.setSelected(editGame.getFavorite());
+            currBox.setSelected(editGame.getCurrentGame());
+            beatBox.setSelected(editGame.getBeat());
 
+            platComboBox.setSelectedItem(editGame.getPlatform());
+            dateCalendarBox.setDate(editGame.getDate());
+        });
+        saveButton.addActionListener(e ->
+        {
+            if (titleField.getText().equals(""))
+            {
+                JOptionPane.showMessageDialog(saveButton, "Please HAVE a TITLE to the added game.", "Warning", 0);
+            }
+            else
+            {
+                // Variables - Publisher / Developer
+                String indDevHold = devField.getText(); 
+                String indPubHold = pubField.getText();
+                LinkedList<String> devHold = new LinkedList<String>();
+                LinkedList<String> pubHold = new LinkedList<String>();
+
+                if (indDevHold.equals(null))
+                {
+                    devHold.add("No Developers");
+                }
+                else
+                {
+                    String[] devTempArr = indDevHold.split(",");
+                    for (String str : devTempArr)
+                    {
+                        devHold.add(str);
+                    }
+                }
+
+                if (indPubHold.equals(null))
+                {
+                    devHold.add("No Publishers");
+                }
+                else
+                {
+                    String[] pubTempArray = indPubHold.split(",");
+                    for (String str : pubTempArray)
+                    {
+                        pubHold.add(str);
+                    }
+                }
+
+                // Variables - Other
+                Date selectedDate = dateCalendarBox.getDate();
+                String titleHold = "NULL";
+                int timesbeatHold = 0;
+
+                // dateHold = dateField.getText();
+                titleHold = titleField.getText();
+                String platformHold = (String) platComboBox.getSelectedItem();
+
+                if (beatBool)
+                {
+                    if (timesBeatField.getText().equals(""))
+                    {
+                        timesbeatHold = 1;
+                    }
+                    else
+                    {
+                        timesbeatHold = Integer.parseInt(timesBeatField.getText());
+                    }
+                }
+                else if (!beatBool)
+                {
+                    timesbeatHold = 0;
+                }
+
+                Edit_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool);
+                games_list.remove(index);
+                games_list.add(index, Edit_Game);
+                //tableModel.fireTableDataChanged();
+                editFrame.dispose();
+            }
         });
 
 

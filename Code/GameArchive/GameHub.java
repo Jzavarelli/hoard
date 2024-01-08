@@ -29,10 +29,12 @@ import javax.swing.filechooser.FileSystemView;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
+// import com.formdev.flatlaf.FlatDarculaLaf;
+// import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+// import com.formdev.flatlaf.FlatLightLaf;
 
-public class GameHub extends VideoGame
+public class GameHub extends VideoGame implements MouseListener
 {
     // // Global Parameters
     static JFrame gameFrame = new JFrame("Game Archiver");
@@ -42,7 +44,6 @@ public class GameHub extends VideoGame
 
     public static void refreshList(LinkedList<VideoGame> games_list, JTable games_table)
     {
-        //String[] col_names = {"Title", "Platform", "Beaten", "Times Beaten", "Currently Playing", "Favorite"};
         Object row_items[] = new Object[6];
         DefaultTableModel model = (DefaultTableModel) games_table.getModel();
 
@@ -59,7 +60,6 @@ public class GameHub extends VideoGame
             model.addRow(row_items);
         }
         
-
         if (model.getRowCount() > 0)
         {
             for(int i = model.getRowCount(); i < games_list.size(); i++)
@@ -75,7 +75,7 @@ public class GameHub extends VideoGame
                 row_items = new Object[6];
             }
         }
-        
+
         gameFrame.revalidate();
         gameFrame.repaint();
     }
@@ -87,7 +87,7 @@ public class GameHub extends VideoGame
         // LaF Pre-Initialization
         try 
         {
-            UIManager.setLookAndFeel( new FlatLightLaf() );
+            UIManager.setLookAndFeel( new FlatIntelliJLaf() );
         } 
         catch( Exception ex ) 
         {
@@ -99,6 +99,7 @@ public class GameHub extends VideoGame
         LinkedList<VideoGame> game_titles = new LinkedList<VideoGame>();
 
         // Build Frame
+        JFrame.setDefaultLookAndFeelDecorated(true);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setLocation(500, 150);
         gameFrame.setResizable(false);
@@ -107,9 +108,9 @@ public class GameHub extends VideoGame
         // MenuBar System
         JMenuBar menBar = new JMenuBar();
         JMenu item1 = new JMenu("File");
-        JMenu item2 = new JMenu("Theme");
+        // JMenu item2 = new JMenu("Theme");
         menBar.add(item1);
-        menBar.add(item2);
+        // menBar.add(item2);
 
         JMenuItem item1Open = new JMenuItem("Open");
         JFileChooser fileOpen = new JFileChooser();
@@ -132,7 +133,6 @@ public class GameHub extends VideoGame
                 System.out.println("User Canceled File Opening");
             }
         });
-
         item1.add(item1Save);
         item1Save.addActionListener(e ->
         {
@@ -181,42 +181,57 @@ public class GameHub extends VideoGame
             }
         });
 
-        JMenuItem item2Light = new JMenuItem("Light Theme");
-        JMenuItem item2Dark = new JMenuItem("Dark Theme");
+        // JMenuItem item2Light = new JMenuItem("Light Theme");
+        // JMenuItem item2Dark = new JMenuItem("Dark Theme");
 
-        // LaF Initializer 
-        item2.add(item2Light);
-        item2Light.addActionListener(e -> 
-        {
-            try 
-            {
-                System.out.println("Light Theme");
-                UIManager.setLookAndFeel( new FlatLightLaf() );
-            } 
-            catch( Exception ex ) 
-            {
-                System.err.println( "Failed to initialize LaF" );
-            }
-        });
-
-        item2.add(item2Dark);
-        item2Dark.addActionListener(e -> 
-        {
-            try 
-            {
-                System.out.println("Dark Theme");
-                UIManager.setLookAndFeel( new FlatDarkLaf() );
-            } 
-            catch( Exception ex ) 
-            {
-                System.err.println( "Failed to initialize LaF" );
-            }
-        });
+        // // LaF Initializer 
+        // item2.add(item2Light);
+        // item2Light.addActionListener(e -> 
+        // {
+        //     try 
+        //     {
+        //         System.out.println("Light Theme");
+        //         UIManager.setLookAndFeel( new FlatLightLaf() );
+        //     } 
+        //     catch( Exception ex ) 
+        //     {
+        //         System.err.println( "Failed to initialize LaF" );
+        //     }
+        // });
+        // item2.add(item2Dark);
+        // item2Dark.addActionListener(e -> 
+        // {
+        //     try 
+        //     {
+        //         System.out.println("Dark Theme");
+        //         UIManager.setLookAndFeel( new FlatDarkLaf() );
+        //     } 
+        //     catch( Exception ex ) 
+        //     {
+        //         System.err.println( "Failed to initialize LaF" );
+        //     }
+        // });
 
         // Build Panel
-        JPanel gameViewPanel = new JPanel();
-        JPanel gamePanel = new JPanel();
+        Container gameViewPane = new Container();
+        gameViewPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        gameViewPane.setLayout(new GridBagLayout());
 
+        Container gamePane = new Container();
+        gamePane.setBackground(Color.GREEN);
+        gamePane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        gamePane.setLayout(new GridBagLayout());
+
+        // Grid Items
+        GridBagConstraints grid = new GridBagConstraints();
+        grid.fill = GridBagConstraints.HORIZONTAL;
+        grid.weightx = 0.5;
+        grid.ipadx = 10;
+        grid.ipady = 10;
+
+        Insets defauIn = new Insets(2, 5, 2, 5);       
+
+        // Components
         String[] col_names = {"Title", "Platform", "Beaten", "Times Beaten", "Currently Playing", "Favorite"};
         DefaultTableModel table_core = new DefaultTableModel();
         table_core.addColumn(col_names[0]);
@@ -229,29 +244,39 @@ public class GameHub extends VideoGame
         JTable gameTable = new JTable(table_core);
         JScrollPane scrollView = new JScrollPane(gameTable);
 
-        // Add Button
+        JLabel titleLabel = new JLabel("TITLE");
+        titleLabel.setFont(new Font("Arial", 0, 24));
+        JLabel dateLabel = new JLabel("RELEASE DATE");
+        dateLabel.setFont(new Font("Arial", 0, 12));
+        JLabel platformLabel = new JLabel("PLATFORM");
+        platformLabel.setFont(new Font("Arial", 0, 12));
+        JLabel devLabel = new JLabel("DEVELOPERS");
+        devLabel.setFont(new Font("Arial", 0, 12));
+        JLabel pubLabel = new JLabel("PUBLISHERS");
+        pubLabel.setFont(new Font("Arial", 0, 12));
+
+        // Button
         JButton addButton = new JButton("Add Game");
         addButton.addActionListener(e ->
         {
             VideoGame newGame = new VideoGame();
             new AddGame(newGame, game_titles);
         });
-
-        // Edit Button
         JButton editButton = new JButton("Edit Game");
         editButton.addActionListener(e ->
         {
+            int row_selected = gameTable.getSelectedRow();
+
             if (gameTable.getRowCount() == 0 || gameTable.getSelectionModel().isSelectionEmpty() == true)
             {
                 JOptionPane.showMessageDialog(editButton, "Please SELECT an item to EDIT, in a NON_EMPTY TABLE.", "Warning", 0);
             }
             else
             {
-                new EditGame(game_titles.get(gameTable.getSelectedRow()));
+                DefaultTableModel model = (DefaultTableModel) gameTable.getModel();
+                new EditGame(game_titles.get(row_selected), game_titles, row_selected, model);
             }
         });
-
-        // Delete Button
         JButton deleteButton = new JButton("Delete Game");
         deleteButton.addActionListener(e ->
         {
@@ -270,15 +295,70 @@ public class GameHub extends VideoGame
             }
         });
 
-        gameViewPanel.add(scrollView);
-        gamePanel.add(addButton);
-        gamePanel.add(editButton);
-        gamePanel.add(deleteButton);
+        // Mouse Listener
+
+
+        // Grid Layout Setup
+        grid.anchor = GridBagConstraints.PAGE_START;
+        grid.fill = GridBagConstraints.BOTH;
+        grid.weighty = 1.0;
+        grid.gridx = 0;
+        grid.gridy = 0;
+        grid.insets = defauIn;
+        gameViewPane.add(scrollView, grid);
+
+        grid.anchor = GridBagConstraints.PAGE_START;
+        grid.fill = GridBagConstraints.HORIZONTAL;
+        grid.weighty = 1.0;
+        grid.gridx = 0;
+        grid.gridy = 0;
+        grid.insets = defauIn;
+        gamePane.add(addButton, grid);
+
+        grid.gridx = 1;
+        grid.gridy = 0;
+        grid.insets = defauIn;
+        gamePane.add(editButton, grid);
+
+        grid.gridx = 2;
+        grid.gridy = 0;
+        grid.insets = defauIn;
+        gamePane.add(deleteButton, grid);
+
+        grid.anchor = GridBagConstraints.PAGE_END;
+        grid.fill = GridBagConstraints.HORIZONTAL;
+        grid.gridwidth = 3;
+        grid.weighty = 0.0;
+        grid.gridx = 0;
+        grid.gridy = 1;
+        gamePane.add(titleLabel, grid);
+    
+        grid.gridwidth = 1;
+        grid.weighty = 0.0;
+        grid.gridx = 0;
+        grid.gridy = 2;
+        gamePane.add(dateLabel, grid);
+
+        grid.weighty = 0.0;
+        grid.gridx = 0;
+        grid.gridy = 3;
+        gamePane.add(platformLabel, grid);
+
+        grid.weighty = 0.0;
+        grid.gridx = 0;
+        grid.gridy = 4;
+        gamePane.add(devLabel, grid);
+
+        grid.weighty = 0.0;
+        grid.gridx = 0;
+        grid.gridy = 5;
+        gamePane.add(pubLabel, grid);
 
         // Adding Components to Frame
-        gameFrame.getContentPane().add(BorderLayout.CENTER, gameViewPanel);
-        gameFrame.getContentPane().add(BorderLayout.WEST, gamePanel);
+        gameFrame.getContentPane().add(BorderLayout.CENTER, gameViewPane);
+        gameFrame.getContentPane().add(BorderLayout.WEST, gamePane);
         gameFrame.getContentPane().add(BorderLayout.NORTH, menBar);
+        gameFrame.pack();
         gameFrame.setVisible(true);
 
         // Refresh Page Every Second
@@ -293,5 +373,35 @@ public class GameHub extends VideoGame
         Timer timer = new Timer(1000, refresher);
         timer.setRepeats(true);
         timer.start();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mouseClicked'");
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mousePressed'");
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mouseReleased'");
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mouseEntered'");
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'mouseExited'");
     }
 }

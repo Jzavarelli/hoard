@@ -39,6 +39,12 @@ public class VideoGame
         setCurrentGame(curr);
     }
 
+    // Print
+    public void print()
+    {
+        System.out.println(Title_0 + " " + Platform_0 + " " + Release_0.toString() + " " + Beaten_0 + " " + Times_Beaten_0 + " " + Favorite_0);
+    }
+
     // Title
     public void setTitle(String title) { Title_0 = title; } 
 
