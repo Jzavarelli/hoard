@@ -19,6 +19,7 @@ public class EditGame extends VideoGame
 {
     // Global Variables
     VideoGame Edit_Game = new VideoGame();
+    Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
     boolean beatBool = false;
     boolean faveBool = false;
     boolean currBool = false;
@@ -43,9 +44,8 @@ public class EditGame extends VideoGame
         // Build Frame
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame editFrame = new JFrame("Edit Game");
-        editFrame.setLocation(750, 175);
         editFrame.setResizable(false);
-        editFrame.setSize(250, 500);
+
 
         // Build Panel
         Container editPane = new Container();
@@ -87,7 +87,7 @@ public class EditGame extends VideoGame
         }
         devField.setText(devString);
         JTextField pubField = new JTextField(15);
-        for (int k = 0; k < editGame.getDevelopers().size(); k++)
+        for (int k = 0; k < editGame.getPublishers().size(); k++)
         {
             if (k == editGame.getPublishers().size() - 1)
             {
@@ -113,6 +113,19 @@ public class EditGame extends VideoGame
         platComboBox.setSelectedItem(editGame.getPlatform());
         JCalendar dateCalendarBox = new JCalendar();
         dateCalendarBox.setDate(editGame.getDate());
+
+        // Current Condition
+        for (VideoGame game : games_list)
+        {
+            if (game.getCurrentGame() == true && Edit_Game.getCurrentGame() != true)
+            {
+                currBox.setEnabled(false);
+            }
+            else
+            {
+                currBox.setEnabled(true);
+            }
+        }
 
         // Button Listeners
         JButton backButton = new JButton("Back");
@@ -351,10 +364,15 @@ public class EditGame extends VideoGame
                 {
                     timesbeatHold = 0;
                 }
-
-                Edit_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool);
+                String imgPath = ".\\Images\\img_000.jpg";
+                Edit_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool, imgPath);
                 games_list.remove(index);
                 games_list.add(index, Edit_Game);
+
+                for (VideoGame game : games_list)
+                {
+                    game.print();
+                }
                 //tableModel.fireTableDataChanged();
                 editFrame.dispose();
             }
@@ -364,6 +382,7 @@ public class EditGame extends VideoGame
         // Adding Components to Frame
         editFrame.getContentPane().add(BorderLayout.CENTER, editPane);
         editFrame.pack();
+        editFrame.setLocation((screenDimension.width/8), (screenDimension.height/8));
         editFrame.setVisible(true);
     }
 }

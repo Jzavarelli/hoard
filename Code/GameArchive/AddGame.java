@@ -19,6 +19,7 @@ public class AddGame extends VideoGame
 {
     // Global Variables
     VideoGame New_Game = new VideoGame();
+    Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
     boolean beatBool = false;
     boolean faveBool = false;
     boolean currBool = false;
@@ -35,9 +36,7 @@ public class AddGame extends VideoGame
         // Build Frame
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame addFrame = new JFrame("Add Game");
-        addFrame.setLocation(750, 175);
         addFrame.setResizable(false);
-        addFrame.setSize(250, 500);
 
         // Build Pane
         Container addPane = new Container();
@@ -92,6 +91,19 @@ public class AddGame extends VideoGame
         JButton addButton = new JButton("Add");
         JButton backButton = new JButton("Back");
         JButton clearButton = new JButton("Clear Fields");
+        
+        // Current Condition
+        for (VideoGame game : games_list)
+        {
+            if (game.getCurrentGame() == true && New_Game.getCurrentGame() != true)
+            {
+                currBox.setEnabled(false);
+            }
+            else
+            {
+                currBox.setEnabled(true);
+            }
+        }
 
         // Grid Add
         grid.gridx = 0;                 // Column 0
@@ -322,16 +334,22 @@ public class AddGame extends VideoGame
                 {
                     timesbeatHold = 0;
                 }
-
-                New_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool);
+                String imgPath = ".\\Images\\img_000.jpg";
+                New_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool, imgPath);
                 games_list.add(New_Game);
                 addFrame.dispose();
+
+                for (VideoGame game : games_list)
+                {
+                    game.print();
+                }
             }
         });
 
         // Adding Components to Frame
         addFrame.getContentPane().add(BorderLayout.CENTER, addPane);
         addFrame.pack();
+        addFrame.setLocation((screenDimension.width/8), (screenDimension.height/8));
         addFrame.setVisible(true);
     }
 }

@@ -5,16 +5,21 @@
  * 
  */
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
 public class VideoGame 
 {
     // Global Variables -- OBSOLETE
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
     private String Title_0;
+    private String ImgPath_0;
     private LinkedList<String> Developers_0;
     private LinkedList<String> Publishers_0;
     private Date Release_0;
+    private String StringRelease_0;
     private String Platform_0;
     private Boolean Beaten_0;
     private Integer Times_Beaten_0;
@@ -25,10 +30,11 @@ public class VideoGame
     public VideoGame() { }
 
     // Init Build
-    public void buildVideoGame(String title, LinkedList<String> devs, LinkedList<String> pubs, Date release, String platform, int times_beat, boolean beat, boolean fave, boolean curr)
+    public void buildVideoGame(String title, LinkedList<String> devs, LinkedList<String> pubs, Date release, String platform, int times_beat, boolean beat, boolean fave, boolean curr, String img)
     {
         // Initialize Values in Title
         setTitle(title);
+        setImagePath(img);
         setDevelopers(devs);
         setPublishers(pubs);
         setDate(release);
@@ -42,13 +48,18 @@ public class VideoGame
     // Print
     public void print()
     {
-        System.out.println(Title_0 + " " + Platform_0 + " " + Release_0.toString() + " " + Beaten_0 + " " + Times_Beaten_0 + " " + Favorite_0);
+        System.out.println(Title_0 + " " + Platform_0 + " " + StringRelease_0 + " " + Beaten_0 + " " + Times_Beaten_0 + " " + Favorite_0);
     }
 
     // Title
     public void setTitle(String title) { Title_0 = title; } 
 
     protected String getTitle() { return Title_0; }
+
+    // Image
+    public void setImagePath(String imagePath) { ImgPath_0 = imagePath; }
+
+    protected String getImagePath() { return ImgPath_0; }
 
     // Developers of Title
     public void setDevelopers(LinkedList<String> devs) { Developers_0 = devs; } 
@@ -61,7 +72,13 @@ public class VideoGame
     protected LinkedList<String> getPublishers() { return Publishers_0; }
 
     // Release Date
-    public void setDate(Date release) { Release_0 = release; }
+    public void setDate(Date release) 
+    { 
+        Release_0 = release;
+        StringRelease_0 = sdf.format(Release_0);
+    }
+
+    public String getPrintDate() { return StringRelease_0; }
 
     protected Date getDate() { return Release_0; }
 
