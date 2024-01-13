@@ -37,13 +37,14 @@ public class GameHub extends VideoGame
 {
     // // Global Parameters
     static JFrame gameFrame = new JFrame("Game Archiver");
-    static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+     static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
     static DefaultTableModel table_core = new DefaultTableModel();
     static JTable gameTable;
     static JScrollPane scrollView;
     
     static JLabel selectedLabel = new JLabel();
     static String selectedLabelString;
+    static boolean fileOpening = false;
     static int selectedRow;
 
     // Constructor
@@ -51,20 +52,42 @@ public class GameHub extends VideoGame
 
     public static void refreshList(LinkedList<VideoGame> games_list, JTable games_table)
     {
-        Object row_items[] = new Object[6];
+        Object row_items[] = new Object[4];
         DefaultTableModel model = (DefaultTableModel) games_table.getModel();
-        //model.setRowCount(0);
+        if (fileOpening == true)
+        {
+            model.setRowCount(0);
+        }
 
         if (model.getRowCount() == 0 && !games_list.isEmpty())
         {
-            //System.out.println("New Item");
             row_items[0] = games_list.get(0).getTitle();
-            // row_items[1] = games_list.get(0).getPlatform();
-            row_items[1] = games_list.get(0).getBeat();
-            // row_items[3] = games_list.get(0).getTimesBeaten();
-            row_items[2] = games_list.get(0).getCurrentGame();
-            row_items[3] = games_list.get(0).getFavorite();
+            if (games_list.get(0).getBeat() == true)
+            {
+                row_items[1] = "Have";
+            }
+            else
+            {
+                row_items[1] = "Have Not";
+            }
 
+            if (games_list.get(0).getFavorite() == true)
+            {
+                row_items[2] = "Favorited";
+            }
+            else
+            {
+                row_items[2] = "Not Favorited";
+            }
+
+            if (games_list.get(0).getCurrentGame() == true)
+            {
+                row_items[3] = "Yes";
+            }
+            else
+            {
+                row_items[3] = "No";
+            }
             model.addRow(row_items);
         }
         
@@ -73,14 +96,34 @@ public class GameHub extends VideoGame
             for(int i = model.getRowCount(); i < games_list.size(); i++)
             {
                 row_items[0] = games_list.get(i).getTitle();
-                // row_items[1] = games_list.get(i).getPlatform();
-                row_items[1] = games_list.get(i).getBeat();
-                // row_items[3] = games_list.get(i).getTimesBeaten();
-                row_items[2] = games_list.get(i).getCurrentGame();
-                row_items[3] = games_list.get(i).getFavorite();
+                if (games_list.get(i).getBeat() == true)
+                {
+                    row_items[1] = "Have";
+                }
+                else
+                {
+                    row_items[1] = "Have Not";
+                }
 
+                if (games_list.get(i).getFavorite() == true)
+                {
+                    row_items[2] = "Favorited";
+                }
+                else
+                {
+                    row_items[2] = "Not Favorited";
+                }
+
+                if (games_list.get(i).getCurrentGame() == true)
+                {
+                    row_items[3] = "Yes";
+                }
+                else
+                {
+                    row_items[3] = "No";
+                }
                 model.addRow(row_items);
-                row_items = new Object[6];
+                row_items = new Object[4];
             }
         }
 
@@ -105,6 +148,57 @@ public class GameHub extends VideoGame
         // Variable Initialized
         StringBuilder strBuild = new StringBuilder();
         LinkedList<VideoGame> game_titles = new LinkedList<VideoGame>();
+        String[] JSONkey = {"Title", "Release Date", "Platform", "Developer(s)", "Publisher(s)", "Beat", "Times Beat", "Favorite", "Current", "Image Path"};
+
+        // JSON data.json Open
+        JSONParser jsonDataParse = new JSONParser();
+        String fileDataPath = (".\\Data\\data.json");
+
+        try
+        {
+            JSONObject data = (JSONObject) jsonDataParse.parse(new FileReader(fileDataPath));
+            JSONArray gameList = (JSONArray) data.get("Games");
+            
+            for (Object indGame : gameList)
+            {
+                JSONObject indObjGame = (JSONObject) indGame;
+                VideoGame openGame = new VideoGame();
+                
+                LinkedList<String> openPubs = new LinkedList<String>();
+                JSONArray pubsArray = (JSONArray) indObjGame.get(JSONkey[4]);
+                for (Object pubItem : pubsArray)
+                {
+                    openPubs.add((String) pubItem);
+                }
+
+                LinkedList<String> openDevs = new LinkedList<String>();
+                JSONArray devsArray = (JSONArray) indObjGame.get(JSONkey[3]);
+                for (Object devItem : devsArray)
+                {
+                    openDevs.add((String) devItem);
+                }
+
+                boolean openBeat = (boolean) indObjGame.get(JSONkey[5]);
+                boolean openFave = (boolean) indObjGame.get(JSONkey[7]);
+                boolean openCurr = (boolean) indObjGame.get(JSONkey[8]);
+
+                String openTitle = (String) indObjGame.get(JSONkey[0]);
+                String openPlatf = (String) indObjGame.get(JSONkey[2]);
+                String openImg = (String) indObjGame.get(JSONkey[9]);
+                String openStringRelease = (String) indObjGame.get(JSONkey[1]);
+                long openTimesBeat = (long) indObjGame.get(JSONkey[6]);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+                Date openRelease = sdf.parse(openStringRelease);
+
+                openGame.buildVideoGame(openTitle, openDevs, openPubs, openRelease, openPlatf, (int) openTimesBeat, openBeat, openFave, openCurr, openImg);
+                game_titles.add(openGame);
+            }
+        }
+        catch (Exception except)
+        {
+            except.printStackTrace();
+        }
 
         // Build Frame
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -124,9 +218,7 @@ public class GameHub extends VideoGame
         fileOpen.setFileFilter(new FileNameExtensionFilter("Only .json files", "json", "JSON"));
         JMenuItem item1Save = new JMenuItem("Save As...");
 
-        // File Initializer
-        String[] JSONkey = {"Title", "Release Date", "Platform", "Developer(s)", "Publisher(s)", "Beat", "Times Beat", "Favorite", "Current", "Image Path"};
-
+        // File Initialization
         item1.add(item1Open);
         item1Open.addActionListener(e ->
         {
@@ -135,6 +227,7 @@ public class GameHub extends VideoGame
             int approval_opt = fileOpen.showOpenDialog(null);
             if (approval_opt == JFileChooser.APPROVE_OPTION)
             {
+                game_titles.clear();
                 JSONParser jsonParse = new JSONParser();
                 String filePath = fileOpen.getSelectedFile().getAbsolutePath();
 
@@ -176,6 +269,7 @@ public class GameHub extends VideoGame
                         Date openRelease = sdf.parse(openStringRelease);
 
                         openGame.buildVideoGame(openTitle, openDevs, openPubs, openRelease, openPlatf, (int) openTimesBeat, openBeat, openFave, openCurr, openImg);
+                        fileOpening = true;
                         game_titles.add(openGame);
                     }
                 }
@@ -189,6 +283,7 @@ public class GameHub extends VideoGame
                 System.out.println("User Canceled File Opening");
             }
         });
+
         item1.add(item1Save);
         item1Save.addActionListener(e ->
         {
@@ -246,6 +341,7 @@ public class GameHub extends VideoGame
         Container gameHolder = new Container();
         gameHolder.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         gameHolder.setLayout(new GridBagLayout());
+        gameHolder.setMaximumSize(new Dimension(screenDimension.width/7, screenDimension.height));
 
         Container gamePane = new Container();
         gamePane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -267,16 +363,34 @@ public class GameHub extends VideoGame
         // Components
         ImageIcon coverArt = new ImageIcon();
         JLabel coverArtCont = new JLabel(coverArt);
+        coverArtCont.setBorder(BorderFactory.createEtchedBorder());
         JLabel titleLabel = new JLabel("TITLE");
+        titleLabel.setPreferredSize(new Dimension(screenDimension.width/16, screenDimension.height/18));
         titleLabel.setFont(new Font("Arial", 0, 24));
+        titleLabel.setBorder(BorderFactory.createEtchedBorder());
         JLabel dateLabel = new JLabel("RELEASE DATE");
-        dateLabel.setFont(new Font("Arial", 0, 12));
+        dateLabel.setFont(new Font("Arial", 0, 16));
+        dateLabel.setBorder(BorderFactory.createEtchedBorder());
         JLabel platformLabel = new JLabel("PLATFORM");
-        platformLabel.setFont(new Font("Arial", 0, 12));
+        platformLabel.setFont(new Font("Arial", 0, 16));
+        platformLabel.setBorder(BorderFactory.createEtchedBorder());
+        ImageIcon platformImg = new ImageIcon();
+        JLabel platformImgCont = new JLabel(platformImg);
+        platformImgCont.setBorder(BorderFactory.createEtchedBorder());
         JLabel devLabel = new JLabel("DEVELOPERS");
-        devLabel.setFont(new Font("Arial", 0, 12));
+        devLabel.setPreferredSize(new Dimension(screenDimension.width/18, screenDimension.height/24));
+        devLabel.setFont(new Font("Arial", 0, 16));
+        devLabel.setBorder(BorderFactory.createEtchedBorder());
         JLabel pubLabel = new JLabel("PUBLISHERS");
-        pubLabel.setFont(new Font("Arial", 0, 12));
+        pubLabel.setPreferredSize(new Dimension(screenDimension.width/18, screenDimension.height/24));
+        pubLabel.setFont(new Font("Arial", 0, 16));
+        pubLabel.setBorder(BorderFactory.createEtchedBorder());
+        JLabel numBeatLabel = new JLabel("BEATEN");
+        numBeatLabel.setFont(new Font("Arial", 0, 16));
+        numBeatLabel.setBorder(BorderFactory.createEtchedBorder());
+        ImageIcon numBeatImg = new ImageIcon();
+        JLabel numBeatImgCont = new JLabel(numBeatImg);
+        numBeatImgCont.setBorder(BorderFactory.createEtchedBorder());
 
         // Table
         String[] col_names = {"Title", "Beaten", "Favorite", "Currently Playing"}; // , "Platform", "Times Beaten"
@@ -310,14 +424,169 @@ public class GameHub extends VideoGame
                 selectedLabel.setText(selectedLabelString);
                 
                 // Display Text Update
-                titleLabel.setText(game_titles.get(selectedRow).getTitle());
+                titleLabel.setText("<html>" + game_titles.get(selectedRow).getTitle() + "</html>");
                 coverArtCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\img_000.jpg").
-                getImage().getScaledInstance((screenDimension.width/8), (screenDimension.height/4), Image.SCALE_AREA_AVERAGING)));
+                getImage().getScaledInstance(256, 300, Image.SCALE_AREA_AVERAGING)));
+                dateLabel.setText("Date: " + game_titles.get(selectedRow).getPrintDate());
 
-                dateLabel.setText(game_titles.get(selectedRow).getPrintDate());
-                platformLabel.setText(game_titles.get(selectedRow).getPlatform());
-                devLabel.setText("DEVS");
-                pubLabel.setText("PUBS");
+                platformLabel.setText("Platform: " + game_titles.get(selectedRow).getPlatform());
+                switch(game_titles.get(selectedRow).getPlatform())
+                {
+                    case ("PC"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\pc_00.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("PSP"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\psp_01.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("PSP Vita"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\psvita_02.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Playstation 1"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\playstation_99.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Playstation 2"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\playstation_99.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Playstation 3"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\playstation_99.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Playstation 4"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\playstation4_06.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Playstation 5"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\playstation_99.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Xbox Original"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\xbox_08.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Xbox 360"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\xbox360_09.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Xbox One"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\xboxone_10.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Xbox Series X"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\xbox_99.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("NES"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\nes_12.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("GameBoy"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\gameboy_13.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("SNES"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\snes_14.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Nintendo 64"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\n64_15.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("GameCube"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\gamecube_16.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("DS"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\ds_17.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Wii"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\wii_18.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Wii-U"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\nintendo_99.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("3DS"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\3ds_20.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    case ("Nintendo Switch"):
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\switch_21.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+
+                    default:
+                        platformImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\pc_00.png").
+                        getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                        break;
+                }
+
+                String devDisplayStr = "", pubDisplayStr = "";
+                for (int i = 0; i < game_titles.get(selectedRow).getDevelopers().size(); i++)
+                {
+                    if (i == game_titles.get(selectedRow).getDevelopers().size() - 1)
+                    {
+                        devDisplayStr += (game_titles.get(selectedRow).getDevelopers().get(i));
+                    }
+                    else
+                    {
+                        devDisplayStr += (game_titles.get(selectedRow).getDevelopers().get(i)+ ", ");
+                    }
+                }
+
+                for (int l = 0; l < game_titles.get(selectedRow).getPublishers().size(); l++)
+                {
+                    if (l == game_titles.get(selectedRow).getPublishers().size() - 1)
+                    {
+                        pubDisplayStr += (game_titles.get(selectedRow).getPublishers().get(l));
+                    }
+                    else
+                    {
+                        pubDisplayStr += (game_titles.get(selectedRow).getPublishers().get(l)+ ", ");
+                    } 
+                }
+                devLabel.setText("<html>Developer(s): " + devDisplayStr + "</html>");
+                pubLabel.setText("<html>Publisher(s): " + pubDisplayStr + "</html>");
+
+                numBeatLabel.setText("Times Completed: " + game_titles.get(selectedRow).getTimesBeaten());
+                if (game_titles.get(selectedRow).getTimesBeaten() == 0)
+                {
+                    numBeatImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\beat_00.png").
+                    getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                }
+                else
+                {
+                    numBeatImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\beat_01.png").
+                    getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
+                }
+                
             }
         });
 
@@ -403,7 +672,8 @@ public class GameHub extends VideoGame
 
         grid.anchor = GridBagConstraints.PAGE_END;
         grid.fill = GridBagConstraints.HORIZONTAL;
-        grid.gridwidth = 1;
+        grid.insets = new Insets(10, 10, 10, 1);
+        grid.gridwidth = 3;
         grid.weighty = 0.0;
         grid.gridx = 0;
         grid.gridy = 1;
@@ -415,6 +685,7 @@ public class GameHub extends VideoGame
         gameDisplayPane.add(coverArtCont, grid);
     
         grid.weighty = 0.0;
+        grid.gridwidth = 1;
         grid.gridx = 0;
         grid.gridy = 3;
         gameDisplayPane.add(dateLabel, grid);
@@ -424,7 +695,13 @@ public class GameHub extends VideoGame
         grid.gridy = 4;
         gameDisplayPane.add(platformLabel, grid);
 
+        grid.weighty = -1.0;
+        grid.gridx = 2;
+        grid.gridy = 4;
+        gameDisplayPane.add(platformImgCont, grid);
+
         grid.weighty = 0.0;
+        grid.gridwidth = 3;
         grid.gridx = 0;
         grid.gridy = 5;
         gameDisplayPane.add(devLabel, grid);
@@ -434,13 +711,30 @@ public class GameHub extends VideoGame
         grid.gridy = 6;
         gameDisplayPane.add(pubLabel, grid);
 
+        grid.insets = new Insets(20, 10, 25, 0);
+        grid.weighty = 0.0;
+        grid.gridwidth = 1;
+        grid.gridx = 0;
+        grid.gridy = 7;
+        gameDisplayPane.add(numBeatLabel, grid);
+
+        grid.weighty = 0.0;
+        grid.gridheight = 2;
+        grid.gridx = 2;
+        grid.gridy = 7;
+        gameDisplayPane.add(numBeatImgCont, grid);
+
         grid.anchor = GridBagConstraints.PAGE_START;
+        grid.insets = new Insets(0, 0, 0, 0);
+        grid.ipady = 25;
         grid.weighty = 1.0;
+        grid.gridheight = 1;
         grid.gridx = 0;
         grid.gridy = 0;
         gameHolder.add(gamePane, grid);
 
         grid.weighty = 0.0;
+        grid.ipady = 0;
         grid.gridx = 0;
         grid.gridy = 1;
         gameHolder.add(gameDisplayPane, grid);
