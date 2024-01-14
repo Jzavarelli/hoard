@@ -55,20 +55,20 @@ public class AddGame extends VideoGame
         // Components
         JLabel titleLabel = new JLabel("Title:");
         JTextField titleField = new JTextField(15);
-
+        JLabel imageLabel = new JLabel("Cover Art");
+        JTextField imageField = new JTextField();
+        imageField.setToolTipText("Enter just the name of the file with extension. (i.e. img.png, img.jpg, etc.)");
         JLabel devLabel = new JLabel("Developer(s):");
         JTextField devField = new JTextField(15);
-        devField.setToolTipText("Format Developer(s) as: developer_1, developer_2, etc");
-
+        devField.setToolTipText("Enter Developer(s) with commas. (i.e. developer_1, developer_2, etc.)");
         JLabel pubLabel = new JLabel("Publisher(s):");
         JTextField pubField = new JTextField(15);
-        pubField.setToolTipText("Format Publisher(s) as: publisher_1, publisher_2, etc");
+        pubField.setToolTipText("Enter Publisher(s) with commas (i.e. publisher_1, publisher_2, etc.)");
 
         JCalendar dateCalendar = new JCalendar();
 
         JLabel beatLabel = new JLabel("Beaten:");
         JCheckBox beatBox = new JCheckBox();
-
         JLabel timesBeatLabel = new JLabel("Times Beaten:");
         JTextField timesbeField = new JTextField(15);
         timesbeField.setToolTipText("Format Times Beaten (NUMBER) as: XXX");
@@ -84,20 +84,20 @@ public class AddGame extends VideoGame
 
         JLabel favoriteLabel = new JLabel("Favorite:");
         JCheckBox faveBox = new JCheckBox();
-
         JLabel currentLabel = new JLabel("Current:");
         JCheckBox currBox = new JCheckBox();
 
         JButton addButton = new JButton("Add");
         JButton backButton = new JButton("Back");
         JButton clearButton = new JButton("Clear Fields");
-        
+
         // Current Condition
         for (VideoGame game : games_list)
         {
-            if (game.getCurrentGame() == true && New_Game.getCurrentGame() != true)
+            if (game.getCurrentGame() == true)
             {
                 currBox.setEnabled(false);
+                break;
             }
             else
             {
@@ -119,41 +119,51 @@ public class AddGame extends VideoGame
         grid.gridx = 0;
         grid.gridy = 1;                 // Row 1
         grid.insets = defauIn;
-        addPane.add(devLabel, grid);
+        addPane.add(imageLabel, grid);
 
         grid.gridx = 1;
         grid.gridy = 1;
         grid.insets = defauIn;
+        addPane.add(imageField, grid);
+
+        grid.gridx = 0;
+        grid.gridy = 2;                 // Row 2
+        grid.insets = defauIn;
+        addPane.add(devLabel, grid);
+
+        grid.gridx = 1;
+        grid.gridy = 2;
+        grid.insets = defauIn;
         addPane.add(devField, grid);
         
         grid.gridx = 0;
-        grid.gridy = 2;                 // Row 2
+        grid.gridy = 3;                 // Row 3
         grid.insets = defauIn;
         addPane.add(pubLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 2;
+        grid.gridy = 3;
         grid.insets = defauIn;
         addPane.add(pubField, grid);
 
         grid.weightx = 0.0;
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 3;                 // Row 3
+        grid.gridy = 4;                 // Row 4
         grid.insets = defauIn;
         addPane.add(platformLabel, grid);
 
         grid.weightx = 0.0;
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 4;                 // Row 4
+        grid.gridy = 5;                 // Row 5
         grid.insets = new Insets(2, 5, 10, 5);
         addPane.add(platBox, grid);
 
         grid.weighty = 1.0;
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 5;                 // Row 5
+        grid.gridy = 6;                 // Row 6
         grid.insets = defauIn;
         addPane.add(dateCalendar, grid);
 
@@ -161,62 +171,62 @@ public class AddGame extends VideoGame
         grid.weightx = 0.5;
 
         grid.gridx = 0;
-        grid.gridy = 6;                 // Row 6
+        grid.gridy = 7;                 // Row 7
         grid.insets = defauIn;
         addPane.add(beatLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 6;
+        grid.gridy = 7;
         grid.insets = defauIn;
         addPane.add(beatBox, grid);
         
         grid.gridx = 0;
-        grid.gridy = 7;                 // Row 7
+        grid.gridy = 8;                 // Row 8
         grid.insets = defauIn;
         addPane.add(timesBeatLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 7;
+        grid.gridy = 8;
         grid.insets = defauIn;
         addPane.add(timesbeField, grid);
 
         grid.gridx = 0;
-        grid.gridy = 8;                 // Row 8
+        grid.gridy = 9;                 // Row 9
         grid.insets = defauIn;
         addPane.add(favoriteLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 8;
+        grid.gridy = 9;
         grid.insets = defauIn;
         addPane.add(faveBox, grid);
 
         grid.gridx = 0;
-        grid.gridy = 9;                 // Row 9
+        grid.gridy = 10;                 // Row 10
         grid.insets = defauIn;
         addPane.add(currentLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 9;
+        grid.gridy = 10;
         grid.insets = defauIn;
         addPane.add(currBox, grid);
 
         grid.gridx = 0;
-        grid.gridy = 10;                 // Row 10
+        grid.gridy = 11;                 // Row 11
         grid.insets = defauIn;
         addPane.add(backButton, grid);
 
         grid.gridx = 1;
-        grid.gridy = 10;
+        grid.gridy = 11;
         grid.insets = defauIn;
         addPane.add(clearButton, grid);
 
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 11;                 // Row 11
+        grid.gridy = 12;                 // Row 12
         grid.insets = new Insets(2, 5, 20, 5);
         addPane.add(addButton, grid);
 
-        // Event - Item Listeners
+        // Event - Box Listeners
         beatBox.addItemListener(e ->
         {
             if (timesbeField.isEnabled())
@@ -253,6 +263,7 @@ public class AddGame extends VideoGame
             }
         });
 
+        // Button Listeners
         backButton.addActionListener(e ->
         {
             addFrame.dispose();
@@ -284,7 +295,7 @@ public class AddGame extends VideoGame
                 LinkedList<String> devHold = new LinkedList<String>();
                 LinkedList<String> pubHold = new LinkedList<String>();
 
-                if (indDevHold.equals(null))
+                if (devField.getText().isEmpty())
                 {
                     devHold.add("No Developers");
                 }
@@ -297,9 +308,9 @@ public class AddGame extends VideoGame
                     }
                 }
 
-                if (indPubHold.equals(null))
+                if (pubField.getText().isEmpty())
                 {
-                    devHold.add("No Publishers");
+                    pubHold.add("No Publishers");
                 }
                 else
                 {
@@ -310,15 +321,29 @@ public class AddGame extends VideoGame
                     }
                 }
 
-                // Variables - Other
-                Date selectedDate = dateCalendar.getDate();
-                String titleHold = "NULL";
-                int timesbeatHold = 0;
+                // Variables - Image Output
+                String imgPath = ".\\Images\\";
+                if (imageField.getText().isEmpty())
+                {
+                    imgPath += "img_999.jpg";
+                }
+                else
+                {
+                    imgPath += imageField.getText();
+                }
 
-                // dateHold = dateField.getText();
+                // Variables - Date Output
+                Date selectedDate = dateCalendar.getDate();
+
+                // Variables - Title Output
+                String titleHold = "NULL";
                 titleHold = titleField.getText();
+
+                // Variables - Platform Output
                 String platformHold = (String) platBox.getSelectedItem();
 
+                // Variables - Beat Number / State Output
+                int timesbeatHold = 0;
                 if (beatBool)
                 {
                     if (timesbeField.getText().equals(""))
@@ -334,15 +359,11 @@ public class AddGame extends VideoGame
                 {
                     timesbeatHold = 0;
                 }
-                String imgPath = ".\\Images\\img_000.jpg";
+
+                // New Game Formation
                 New_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool, imgPath);
                 games_list.add(New_Game);
                 addFrame.dispose();
-
-                for (VideoGame game : games_list)
-                {
-                    game.print();
-                }
             }
         });
 

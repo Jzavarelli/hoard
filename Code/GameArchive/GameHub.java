@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import javax.swing.Timer;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.json.simple.JSONArray;
@@ -45,6 +47,7 @@ public class GameHub extends VideoGame
     static JLabel selectedLabel = new JLabel();
     static String selectedLabelString;
     static boolean fileOpening = false;
+    static boolean fileSorting = false;
     static int selectedRow;
 
     // Constructor
@@ -54,7 +57,7 @@ public class GameHub extends VideoGame
     {
         Object row_items[] = new Object[4];
         DefaultTableModel model = (DefaultTableModel) games_table.getModel();
-        if (fileOpening == true)
+        if (fileOpening == true || fileSorting == true)
         {
             model.setRowCount(0);
         }
@@ -127,6 +130,36 @@ public class GameHub extends VideoGame
             }
         }
 
+        for (int h = 0; h < games_list.size(); h++)
+        {
+            model.setValueAt(games_list.get(h).getTitle(), h, 0);
+            if (games_list.get(h).getBeat() == true)
+            {
+                model.setValueAt("Have", h, 1);
+            }
+            else
+            {
+                model.setValueAt("Have Not", h, 1);
+            }
+
+            if (games_list.get(h).getFavorite() == true)
+            {
+                model.setValueAt("Favorited", h, 2);
+            }
+            else
+            {
+                model.setValueAt("Not Favorited", h, 2);
+            }
+
+            if (games_list.get(h).getCurrentGame() == true)
+            {
+                model.setValueAt("Yes", h, 3);
+            }
+            else
+            {
+                model.setValueAt("No", h, 3);
+            }
+        }
         gameFrame.revalidate();
         gameFrame.repaint();
     }
@@ -135,6 +168,9 @@ public class GameHub extends VideoGame
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws Exception
     {
+
+    /* ------------------------------------------------------------------------------------------------------ */
+                
         // LaF Pre-Initialization
         try 
         {
@@ -150,10 +186,11 @@ public class GameHub extends VideoGame
         LinkedList<VideoGame> game_titles = new LinkedList<VideoGame>();
         String[] JSONkey = {"Title", "Release Date", "Platform", "Developer(s)", "Publisher(s)", "Beat", "Times Beat", "Favorite", "Current", "Image Path"};
 
-        // JSON data.json Open
+    /* ------------------------------------------------------------------------------------------------------ */
+                
+        // JSON DATA initialization
         JSONParser jsonDataParse = new JSONParser();
         String fileDataPath = (".\\Data\\data.json");
-
         try
         {
             JSONObject data = (JSONObject) jsonDataParse.parse(new FileReader(fileDataPath));
@@ -200,8 +237,12 @@ public class GameHub extends VideoGame
             except.printStackTrace();
         }
 
+    /* ------------------------------------------------------------------------------------------------------ */
+            
         // Build Frame
         JFrame.setDefaultLookAndFeelDecorated(true);
+        Image icon = Toolkit.getDefaultToolkit().getImage(".\\Images\\icon_00.png");
+        gameFrame.setIconImage(icon);
         gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         gameFrame.setLocation(500, 150);
         gameFrame.setResizable(false);
@@ -210,15 +251,18 @@ public class GameHub extends VideoGame
         JMenuBar menBar = new JMenuBar();
         JMenu item1 = new JMenu("File");
         JMenu item2 = new JMenu("Sort");
-        menBar.add(item1);
-        menBar.add(item2);
+        JMenuItem item3 = new JMenuItem("Search");
 
+    /* ------------------------------------------------------------------------------------------------------ */
+                
+        // File Initialization
+        menBar.add(item1);
         JMenuItem item1Open = new JMenuItem("Open");
-        JFileChooser fileOpen = new JFileChooser();
-        fileOpen.setFileFilter(new FileNameExtensionFilter("Only .json files", "json", "JSON"));
         JMenuItem item1Save = new JMenuItem("Save As...");
 
-        // File Initialization
+        JFileChooser fileOpen = new JFileChooser();
+        fileOpen.setFileFilter(new FileNameExtensionFilter("Only .json files", "json", "JSON"));
+
         item1.add(item1Open);
         item1Open.addActionListener(e ->
         {
@@ -333,23 +377,83 @@ public class GameHub extends VideoGame
             }
         });
 
+    /* ------------------------------------------------------------------------------------------------------ */
+       
+        // Sort Initialization
+        menBar.add(item2);
+        JMenuItem item2SortLetterA = new JMenuItem("Sort A - Z");
+        JMenuItem item2SortLetterZ = new JMenuItem("Sort Z - A");
+        JMenuItem item2SortPlatf = new JMenuItem("Sort by Platform");
+        JMenuItem item2SortDateA = new JMenuItem("Sort by Recent Date");
+        JMenuItem item2SortDateZ = new JMenuItem("Sort by Latest Date");
+
+        item2.add(item2SortLetterA);
+        item2SortLetterA.addActionListener(e ->
+        {
+            JOptionPane.showMessageDialog(item2SortLetterA, "Not Implemented", "Warning", 0);
+        });
+
+        item2.add(item2SortLetterZ);
+        item2SortLetterZ.addActionListener(e ->
+        {
+            JOptionPane.showMessageDialog(item2SortLetterZ, "Not Implemented", "Warning", 0);
+        });
+
+        item2.add(item2SortPlatf);
+        item2SortPlatf.addActionListener(e ->
+        {
+            JOptionPane.showMessageDialog(item2SortPlatf, "Not Implemented", "Warning", 0);
+        });
+
+        item2.add(item2SortDateA);
+        item2SortDateA.addActionListener(e ->
+        {
+            JOptionPane.showMessageDialog(item2SortDateA, "Not Implemented", "Warning", 0);
+        });
+
+        item2.add(item2SortDateZ);
+        item2SortDateZ.addActionListener(e ->
+        {
+            JOptionPane.showMessageDialog(item2SortDateZ, "Not Implemented", "Warning", 0);
+        });
+
+    /* ------------------------------------------------------------------------------------------------------ */
+
+        // Search Initialization
+        menBar.add(item3);
+        item3.setHorizontalTextPosition(0);
+        item3.addActionListener(e ->
+        {
+            String gameTitle = JOptionPane.showInputDialog(item3, "Enter a game TITLE to find");
+            selectedRow = 1;
+
+            for (int i = 0; i < game_titles.size(); i++)
+            {
+                if (gameTitle.equals(game_titles.get(i).getTitle()))
+                {
+                    selectedRow = i;
+                    gameTable.clearSelection();
+                    gameTable.changeSelection(selectedRow, 0, true, false);
+                    break;
+                }
+                else
+                {
+                    gameTable.clearSelection();
+                }
+            }
+        });
+
+    /* ------------------------------------------------------------------------------------------------------ */
+
         // Build Panel
         Container gameViewPane = new Container();
         gameViewPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         gameViewPane.setLayout(new GridBagLayout());
 
-        Container gameHolder = new Container();
-        gameHolder.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        gameHolder.setLayout(new GridBagLayout());
-        gameHolder.setMaximumSize(new Dimension(screenDimension.width/7, screenDimension.height));
-
-        Container gamePane = new Container();
-        gamePane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        gamePane.setLayout(new GridBagLayout());
-
         Container gameDisplayPane = new Container();
         gameDisplayPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         gameDisplayPane.setLayout(new GridBagLayout());
+        gameDisplayPane.setMaximumSize(new Dimension(screenDimension.width/7, screenDimension.height));
 
         // Grid Items
         GridBagConstraints grid = new GridBagConstraints();
@@ -363,34 +467,34 @@ public class GameHub extends VideoGame
         // Components
         ImageIcon coverArt = new ImageIcon();
         JLabel coverArtCont = new JLabel(coverArt);
-        coverArtCont.setBorder(BorderFactory.createEtchedBorder());
+        //coverArtCont.setBorder(BorderFactory.createEtchedBorder());
         JLabel titleLabel = new JLabel("TITLE");
         titleLabel.setPreferredSize(new Dimension(screenDimension.width/16, screenDimension.height/18));
         titleLabel.setFont(new Font("Arial", 0, 24));
-        titleLabel.setBorder(BorderFactory.createEtchedBorder());
+        //titleLabel.setBorder(BorderFactory.createEtchedBorder());
         JLabel dateLabel = new JLabel("RELEASE DATE");
         dateLabel.setFont(new Font("Arial", 0, 16));
-        dateLabel.setBorder(BorderFactory.createEtchedBorder());
+        //dateLabel.setBorder(BorderFactory.createEtchedBorder());
         JLabel platformLabel = new JLabel("PLATFORM");
         platformLabel.setFont(new Font("Arial", 0, 16));
-        platformLabel.setBorder(BorderFactory.createEtchedBorder());
+        //platformLabel.setBorder(BorderFactory.createEtchedBorder());
         ImageIcon platformImg = new ImageIcon();
         JLabel platformImgCont = new JLabel(platformImg);
-        platformImgCont.setBorder(BorderFactory.createEtchedBorder());
+        //platformImgCont.setBorder(BorderFactory.createEtchedBorder());
         JLabel devLabel = new JLabel("DEVELOPERS");
         devLabel.setPreferredSize(new Dimension(screenDimension.width/18, screenDimension.height/24));
         devLabel.setFont(new Font("Arial", 0, 16));
-        devLabel.setBorder(BorderFactory.createEtchedBorder());
+        //devLabel.setBorder(BorderFactory.createEtchedBorder());
         JLabel pubLabel = new JLabel("PUBLISHERS");
         pubLabel.setPreferredSize(new Dimension(screenDimension.width/18, screenDimension.height/24));
         pubLabel.setFont(new Font("Arial", 0, 16));
-        pubLabel.setBorder(BorderFactory.createEtchedBorder());
+        //pubLabel.setBorder(BorderFactory.createEtchedBorder());
         JLabel numBeatLabel = new JLabel("BEATEN");
         numBeatLabel.setFont(new Font("Arial", 0, 16));
-        numBeatLabel.setBorder(BorderFactory.createEtchedBorder());
+        //numBeatLabel.setBorder(BorderFactory.createEtchedBorder());
         ImageIcon numBeatImg = new ImageIcon();
         JLabel numBeatImgCont = new JLabel(numBeatImg);
-        numBeatImgCont.setBorder(BorderFactory.createEtchedBorder());
+        //numBeatImgCont.setBorder(BorderFactory.createEtchedBorder());
 
         // Table
         String[] col_names = {"Title", "Beaten", "Favorite", "Currently Playing"}; // , "Platform", "Times Beaten"
@@ -410,11 +514,13 @@ public class GameHub extends VideoGame
         gameTable.getTableHeader().setResizingAllowed(false);
 
         gameTable.getColumnModel().getColumn(0).setPreferredWidth(screenDimension.width/5);
+        gameTable.changeSelection(0, 0, true, false);
         scrollView = new JScrollPane(gameTable);
 
-        gameTable.addMouseListener(new MouseAdapter() 
-        {
-            public void mouseClicked(MouseEvent e)
+        gameTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent e)
             {
                 // Row Selection Per Click
                 selectedRow = gameTable.getSelectedRow();
@@ -425,7 +531,7 @@ public class GameHub extends VideoGame
                 
                 // Display Text Update
                 titleLabel.setText("<html>" + game_titles.get(selectedRow).getTitle() + "</html>");
-                coverArtCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\img_000.jpg").
+                coverArtCont.setIcon(new ImageIcon(new ImageIcon(game_titles.get(selectedRow).getImagePath()).
                 getImage().getScaledInstance(256, 300, Image.SCALE_AREA_AVERAGING)));
                 dateLabel.setText("Date: " + game_titles.get(selectedRow).getPrintDate());
 
@@ -585,12 +691,11 @@ public class GameHub extends VideoGame
                 {
                     numBeatImgCont.setIcon(new ImageIcon(new ImageIcon(".\\Images\\beat_01.png").
                     getImage().getScaledInstance(50, 50, Image.SCALE_AREA_AVERAGING)));
-                }
-                
+                }          
             }
         });
 
-        // Button
+        // Buttons - Listeners and Components
         JButton addButton = new JButton("Add Game");
         addButton.addActionListener(e ->
         {
@@ -608,8 +713,7 @@ public class GameHub extends VideoGame
             }
             else
             {
-                DefaultTableModel model = (DefaultTableModel) gameTable.getModel();
-                new EditGame(game_titles.get(row_selected), game_titles, row_selected, model);
+                new EditGame(game_titles.get(row_selected), game_titles, row_selected);
             }
         });
         JButton deleteButton = new JButton("Delete Game");
@@ -654,21 +758,22 @@ public class GameHub extends VideoGame
 
         grid.anchor = GridBagConstraints.PAGE_START;
         grid.fill = GridBagConstraints.HORIZONTAL;
+        grid.gridwidth = 1;
         grid.weighty = 1.0;
         grid.gridx = 0;
         grid.gridy = 0;
         grid.insets = defauIn;
-        gamePane.add(addButton, grid);
+        gameDisplayPane.add(addButton, grid);
 
         grid.gridx = 1;
         grid.gridy = 0;
         grid.insets = defauIn;
-        gamePane.add(editButton, grid);
+        gameDisplayPane.add(editButton, grid);
 
         grid.gridx = 2;
         grid.gridy = 0;
         grid.insets = defauIn;
-        gamePane.add(deleteButton, grid);
+        gameDisplayPane.add(deleteButton, grid);
 
         grid.anchor = GridBagConstraints.PAGE_END;
         grid.fill = GridBagConstraints.HORIZONTAL;
@@ -724,25 +829,9 @@ public class GameHub extends VideoGame
         grid.gridy = 7;
         gameDisplayPane.add(numBeatImgCont, grid);
 
-        grid.anchor = GridBagConstraints.PAGE_START;
-        grid.insets = new Insets(0, 0, 0, 0);
-        grid.ipady = 25;
-        grid.weighty = 1.0;
-        grid.gridheight = 1;
-        grid.gridx = 0;
-        grid.gridy = 0;
-        gameHolder.add(gamePane, grid);
-
-        grid.weighty = 0.0;
-        grid.ipady = 0;
-        grid.gridx = 0;
-        grid.gridy = 1;
-        gameHolder.add(gameDisplayPane, grid);
-
-
         // Adding Components to Frame
         gameFrame.getContentPane().add(BorderLayout.CENTER, gameViewPane);
-        gameFrame.getContentPane().add(BorderLayout.WEST, gameHolder);
+        gameFrame.getContentPane().add(BorderLayout.WEST, gameDisplayPane);
         gameFrame.getContentPane().add(BorderLayout.NORTH, menBar);
         gameFrame.pack();
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);

@@ -7,7 +7,6 @@
 
 // GUI Library
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JCalendar;
 
@@ -36,7 +35,7 @@ public class EditGame extends VideoGame
     public EditGame() { }
 
     // Parameter Constructor
-    public EditGame(VideoGame editGame, LinkedList<VideoGame> games_list, int index, DefaultTableModel tableModel) 
+    public EditGame(VideoGame editGame, LinkedList<VideoGame> games_list, int index) 
     {
         // Init Object / Variables
         Edit_Game = editGame;
@@ -45,7 +44,6 @@ public class EditGame extends VideoGame
         JFrame.setDefaultLookAndFeelDecorated(true);
         JFrame editFrame = new JFrame("Edit Game");
         editFrame.setResizable(false);
-
 
         // Build Panel
         Container editPane = new Container();
@@ -63,6 +61,7 @@ public class EditGame extends VideoGame
 
         // Components
         JLabel titleLabel = new JLabel("Title:");
+        JLabel imageLabel = new JLabel("Cover Art:");
         JLabel devLabel = new JLabel("Developer(s):");
         JLabel pubLabel = new JLabel("Publisher(s):");
         JLabel beatLabel = new JLabel("Beaten:");
@@ -73,6 +72,8 @@ public class EditGame extends VideoGame
 
         JTextField titleField = new JTextField(15);
         titleField.setText(editGame.getTitle());
+        JTextField imageField = new JTextField(15);
+        imageField.setText(editGame.getImagePath().substring(9));
         JTextField devField = new JTextField(15);
         for (int j = 0; j < editGame.getDevelopers().size(); j++)
         {
@@ -120,6 +121,7 @@ public class EditGame extends VideoGame
             if (game.getCurrentGame() == true && Edit_Game.getCurrentGame() != true)
             {
                 currBox.setEnabled(false);
+                break;
             }
             else
             {
@@ -146,41 +148,51 @@ public class EditGame extends VideoGame
         grid.gridx = 0;
         grid.gridy = 1;                 // Row 1
         grid.insets = defauIn;
-        editPane.add(devLabel, grid);
+        editPane.add(imageLabel, grid);
 
         grid.gridx = 1;
         grid.gridy = 1;
         grid.insets = defauIn;
+        editPane.add(imageField, grid);
+
+        grid.gridx = 0;
+        grid.gridy = 2;                 // Row 2
+        grid.insets = defauIn;
+        editPane.add(devLabel, grid);
+
+        grid.gridx = 1;
+        grid.gridy = 2;
+        grid.insets = defauIn;
         editPane.add(devField, grid);
         
         grid.gridx = 0;
-        grid.gridy = 2;                 // Row 2
+        grid.gridy = 3;                 // Row 3
         grid.insets = defauIn;
         editPane.add(pubLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 2;
+        grid.gridy = 3;
         grid.insets = defauIn;
         editPane.add(pubField, grid);
 
         grid.weightx = 0.0;
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 3;                 // Row 3
+        grid.gridy = 4;                 // Row 4
         grid.insets = defauIn;
         editPane.add(platformLabel, grid);
 
         grid.weightx = 0.0;
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 4;                 // Row 4
+        grid.gridy = 5;                 // Row 5
         grid.insets = new Insets(2, 5, 10, 5);;
         editPane.add(platComboBox, grid);
 
         grid.weighty = 1.0;
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 5;                 // Row 5
+        grid.gridy = 6;                 // Row 6
         grid.insets = defauIn;
         editPane.add(dateCalendarBox, grid);
 
@@ -188,58 +200,58 @@ public class EditGame extends VideoGame
         grid.weightx = 0.5;
 
         grid.gridx = 0;
-        grid.gridy = 6;                 // Row 6
+        grid.gridy = 7;                 // Row 7
         grid.insets = defauIn;
         editPane.add(beatLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 6;
+        grid.gridy = 7;
         grid.insets = defauIn;
         editPane.add(beatBox, grid);
         
         grid.gridx = 0;
-        grid.gridy = 7;                 // Row 7
+        grid.gridy = 8;                 // Row 8
         grid.insets = defauIn;
         editPane.add(timeBeatLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 7;
+        grid.gridy = 8;
         grid.insets = defauIn;
         editPane.add(timesBeatField, grid);
 
         grid.gridx = 0;
-        grid.gridy = 8;                 // Row 8
+        grid.gridy = 9;                 // Row 9
         grid.insets = defauIn;
         editPane.add(faveLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 8;
+        grid.gridy = 9;
         grid.insets = defauIn;
         editPane.add(faveBox, grid);
 
         grid.gridx = 0;
-        grid.gridy = 9;                 // Row 9
+        grid.gridy = 10;                 // Row 10
         grid.insets = defauIn;
         editPane.add(currLabel, grid);
 
         grid.gridx = 1;
-        grid.gridy = 9;
+        grid.gridy = 10;
         grid.insets = defauIn;
         editPane.add(currBox, grid);
 
         grid.gridx = 0;
-        grid.gridy = 10;                 // Row 10
+        grid.gridy = 11;                 // Row 11
         grid.insets = defauIn;
         editPane.add(backButton, grid);
 
         grid.gridx = 1;
-        grid.gridy = 10;
+        grid.gridy = 11;
         grid.insets = defauIn;
         editPane.add(clearButton, grid);
         
         grid.gridwidth = 2;
         grid.gridx = 0;
-        grid.gridy = 11;                // Row 11
+        grid.gridy = 12;                // Row 12
         grid.insets = new Insets(2, 5, 20, 5);;
         editPane.add(saveButton, grid);
 
@@ -308,13 +320,13 @@ public class EditGame extends VideoGame
             }
             else
             {
-                // Variables - Publisher / Developer
+                // Variables Modified - Publisher / Developer Output
                 String indDevHold = devField.getText(); 
                 String indPubHold = pubField.getText();
                 LinkedList<String> devHold = new LinkedList<String>();
                 LinkedList<String> pubHold = new LinkedList<String>();
 
-                if (indDevHold.equals(null))
+                if (devField.getText().isEmpty())
                 {
                     devHold.add("No Developers");
                 }
@@ -327,9 +339,9 @@ public class EditGame extends VideoGame
                     }
                 }
 
-                if (indPubHold.equals(null))
+                if (pubField.getText().isEmpty())
                 {
-                    devHold.add("No Publishers");
+                    pubHold.add("No Publishers");
                 }
                 else
                 {
@@ -340,15 +352,27 @@ public class EditGame extends VideoGame
                     }
                 }
 
-                // Variables - Other
+                // Variables Modified- Date, Title, Platform Outputs
                 Date selectedDate = dateCalendarBox.getDate();
-                String titleHold = "NULL";
-                int timesbeatHold = 0;
 
-                // dateHold = dateField.getText();
+                String titleHold = "NULL";
                 titleHold = titleField.getText();
+
                 String platformHold = (String) platComboBox.getSelectedItem();
 
+                // Variables Modified - Image Path Output
+                String imgPath = ".\\Images\\";
+                if (imageField.getText().isEmpty())
+                {
+                    imgPath += "img_999.jpg";
+                }
+                else
+                {
+                    imgPath += imageField.getText();
+                }
+
+                // Variables Modified - Beaten Number/State Output
+                int timesbeatHold = 0;
                 if (beatBool)
                 {
                     if (timesBeatField.getText().equals(""))
@@ -364,20 +388,16 @@ public class EditGame extends VideoGame
                 {
                     timesbeatHold = 0;
                 }
-                String imgPath = ".\\Images\\img_000.jpg";
+
+                // Modifiy Game
                 Edit_Game.buildVideoGame(titleHold, devHold, pubHold, selectedDate, platformHold, timesbeatHold, beatBool, faveBool, currBool, imgPath);
+                
+                // Modify List
                 games_list.remove(index);
                 games_list.add(index, Edit_Game);
-
-                for (VideoGame game : games_list)
-                {
-                    game.print();
-                }
-                //tableModel.fireTableDataChanged();
                 editFrame.dispose();
             }
         });
-
 
         // Adding Components to Frame
         editFrame.getContentPane().add(BorderLayout.CENTER, editPane);
