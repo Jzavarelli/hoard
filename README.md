@@ -7,14 +7,12 @@ Prelude
 The below git code is to do a fresh install of the repository and how to do continuous pushes that involve proper `full-messaged` commits.
 
 > Git Fresh Install
-
 ```
 git lfs install
 git clone <repo:http>
 ```
 
 > Git Status Commit Structure
-
 ```
 git status
 git add --all
@@ -44,8 +42,10 @@ Game Archiver Installation
 <br />
 Before installing, create a folder called **Repository** that will hold the repository that you install, once in the new folder _Right-Click_ within the folder and select the option to _Open in Terminal_. You will want to run an installation of **LFS** for git and will then clone the repository, which is done after Git Bash is installed on the system.
 
-```git lfs install
-git clone https://github.com/Jzavarelli/hoard.git```
+```
+git lfs install
+git clone https://github.com/Jzavarelli/hoard.git
+```
 
 
 The above code will install LFS, a git tool that allows for large files to be easily transfered across the github platform. Then the clone will grab the most recent build of the current repository, which will allow you access to the following game archiver. The next step is then to create a shortcut of the **Game Archiver** jar file that is within the _hoard_ repository.
