@@ -45,7 +45,7 @@ public class VideoGame
         setCurrentGame(curr);
     }
 
-    // Print
+    // Print - DEBUGGING
     public void print()
     {
         System.out.println(Title_0 + " " + Platform_0 + " " + StringRelease_0 + " " + Beaten_0 + " " + Times_Beaten_0 + " " + Favorite_0);

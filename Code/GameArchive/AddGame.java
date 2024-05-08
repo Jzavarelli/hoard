@@ -7,10 +7,12 @@
 
 // GUI Library
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.toedter.calendar.JCalendar;
 
 import java.awt.*;
+import java.io.File;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -58,6 +60,11 @@ public class AddGame extends VideoGame
         JLabel imageLabel = new JLabel("Cover Art");
         JTextField imageField = new JTextField();
         imageField.setToolTipText("Enter just the name of the file with extension. (i.e. img.png, img.jpg, etc.)");
+       
+        JButton imageBrowser = new JButton("Choose Img");
+        JFileChooser imageOpen = new JFileChooser();
+        imageOpen.setFileFilter(new FileNameExtensionFilter("Only Image Files", "png","jpg", "jpeg"));
+
         JLabel devLabel = new JLabel("Developer(s):");
         JTextField devField = new JTextField(15);
         devField.setToolTipText("Enter Developer(s) with commas. (i.e. developer_1, developer_2, etc.)");
@@ -121,11 +128,18 @@ public class AddGame extends VideoGame
         grid.insets = defauIn;
         addPane.add(imageLabel, grid);
 
+        grid.gridwidth = 1;
         grid.gridx = 1;
         grid.gridy = 1;
         grid.insets = defauIn;
         addPane.add(imageField, grid);
 
+        grid.gridx = 2;
+        grid.gridy = 1;
+        grid.insets = defauIn;
+        addPane.add(imageBrowser, grid);
+
+        grid.gridwidth = 2;
         grid.gridx = 0;
         grid.gridy = 2;                 // Row 2
         grid.insets = defauIn;
@@ -264,6 +278,21 @@ public class AddGame extends VideoGame
         });
 
         // Button Listeners
+        imageBrowser.addActionListener(e -> 
+        {
+            imageOpen.setDialogTitle("Select a Image file");
+            imageOpen.setCurrentDirectory(new File(".\\Images\\"));
+            int approval_opt = imageOpen.showOpenDialog(null);
+            if (approval_opt == JFileChooser.APPROVE_OPTION)
+            {
+                String filePath = imageOpen.getSelectedFile().getName();
+                imageField.setText(filePath);
+            }
+            else
+            {
+                System.out.println("User Cancled File Opening");
+            }
+        });
         backButton.addActionListener(e ->
         {
             addFrame.dispose();

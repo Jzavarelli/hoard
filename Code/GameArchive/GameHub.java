@@ -39,7 +39,7 @@ public class GameHub extends VideoGame
 {
     // // Global Parameters
     static JFrame gameFrame = new JFrame("Game Archiver");
-     static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+    static Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
     static DefaultTableModel table_core = new DefaultTableModel();
     static JTable gameTable;
     static JScrollPane scrollView;
@@ -357,8 +357,7 @@ public class GameHub extends VideoGame
             int approval_opt = fileOpen.showSaveDialog(null);
             if (approval_opt == JFileChooser.APPROVE_OPTION)
             {
-                strBuild.append(fileOpen.getSelectedFile().getAbsolutePath());
-                strBuild.append(".json");    
+                strBuild.append(fileOpen.getSelectedFile().getAbsolutePath()); 
                 try
                 {
                     FileWriter fileToWrite = new FileWriter(strBuild.toString());
