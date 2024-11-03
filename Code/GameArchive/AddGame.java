@@ -11,8 +11,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.toedter.calendar.JCalendar;
 
+// import okhttp3.OkHttpClient;
+// import okhttp3.Request;
+// import okhttp3.Response;
+
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -32,6 +36,22 @@ public class AddGame extends VideoGame
     // Parameter Constructor
     public AddGame(VideoGame newGame, LinkedList<VideoGame> games_list) 
     { 
+        // RAWG Key Can Be Refreshed ?key=<9a37aba29638456d82f98be4518e0204> -- BACKLOG
+        // OkHttpClient client = new OkHttpClient();
+
+        // Request request = new Request.Builder()
+            // .url("https://rawg-video-games-database.p.rapidapi.com/games?key=<9a37aba29638456d82f98be4518e0204>")
+            // .get()
+            // .addHeader("x-rapidapi-key", "e6ef05302emsh9c46dd59d7ac5d1p13a2d8jsneb37aae7d452")
+            // .addHeader("x-rapidapi-host", "rawg-video-games-database.p.rapidapi.com")
+            // .build();
+
+        // try
+        // {
+        //     Response response = client.newCall(request).execute();
+        // }
+        // catch (IOException exc) { System.out.println(exc + " : Is Thrown"); }
+
         // Initialize Object
         New_Game = newGame;
 

@@ -35,6 +35,137 @@ import org.json.simple.parser.JSONParser;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
+class VGcompareZA implements Comparator<VideoGame>
+{
+    public int compare(VideoGame in1, VideoGame in2)
+    {
+        String Title1 = in1.getTitle(), Title2 = in2.getTitle();
+        
+        if (Title1.charAt(0) == Title2.charAt(0))
+        {
+            if (Title1.charAt(1) == Title2.charAt(1))
+            {
+                if (Title1.charAt(2) == Title2.charAt(2))
+                {
+                    if (Title1.charAt(3) == Title2.charAt(3))
+                    {
+                        return 0;
+                    }
+                    else if (Title1.charAt(3) > Title2.charAt(3))
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+
+                }
+                else if (Title1.charAt(2) > Title2.charAt(2))
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            else if (Title1.charAt(1) > Title2.charAt(1))
+            {
+                return -1;
+            }
+            else
+            {
+                return 1;
+            }
+        }
+        else if (Title1.charAt(0) > Title2.charAt(0))
+        {
+            return -1;
+        }
+        else
+        {
+            return 1;
+        }
+    }
+}
+
+class VGcompareAZ implements Comparator<VideoGame>
+{
+    public int compare(VideoGame in1, VideoGame in2)
+    {
+        String Title1 = in1.getTitle(), Title2 = in2.getTitle();
+        
+        if (Title1.charAt(0) == Title2.charAt(0))
+        {
+            if (Title1.charAt(1) == Title2.charAt(1))
+            {
+                if (Title1.charAt(2) == Title2.charAt(2))
+                {
+                    if (Title1.charAt(3) == Title2.charAt(3))
+                    {
+                        return 0;
+                    }
+                    else if (Title1.charAt(3) > Title2.charAt(3))
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+
+                }
+                else if (Title1.charAt(2) > Title2.charAt(2))
+                {
+                    return 1;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else if (Title1.charAt(1) > Title2.charAt(1))
+            {
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        else if (Title1.charAt(0) > Title2.charAt(0))
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+}
+
+class VGcompareP implements Comparator<VideoGame>
+{
+    public int compare(VideoGame in1, VideoGame in2)
+    {
+        String Plat1 = in1.getPlatform(), Plat2 = in2.getPlatform();
+        
+        if (Plat1.charAt(0) == Plat2.charAt(0))
+        {
+            return 0;
+        }
+        else if (Plat1.charAt(0) > Plat2.charAt(0))
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+}
+
 public class GameHub extends VideoGame
 {
     // // Global Parameters
@@ -257,6 +388,7 @@ public class GameHub extends VideoGame
                 
         // File Initialization
         menBar.add(item1);
+        item1.setPreferredSize(new Dimension(item1.getMinimumSize().width, item1.getPreferredSize().height));
         JMenuItem item1Open = new JMenuItem("Open");
         JMenuItem item1Save = new JMenuItem("Save As...");
 
@@ -322,10 +454,6 @@ public class GameHub extends VideoGame
                     except.printStackTrace();
                 }
             }
-            else
-            {
-                System.out.println("User Canceled File Opening");
-            }
         });
 
         item1.add(item1Save);
@@ -370,38 +498,37 @@ public class GameHub extends VideoGame
                     ex.printStackTrace();
                 }
             }
-            else
-            {
-                System.out.println("User Canceled Save Option");
-            }
         });
 
     /* ------------------------------------------------------------------------------------------------------ */
        
         // Sort Initialization
         menBar.add(item2);
+        item2.setPreferredSize(new Dimension(item2.getMinimumSize().width, item2.getPreferredSize().height));
         JMenuItem item2SortLetterA = new JMenuItem("Sort A - Z");
         JMenuItem item2SortLetterZ = new JMenuItem("Sort Z - A");
         JMenuItem item2SortPlatf = new JMenuItem("Sort by Platform");
-        JMenuItem item2SortDateA = new JMenuItem("Sort by Recent Date");
-        JMenuItem item2SortDateZ = new JMenuItem("Sort by Latest Date");
+        JMenuItem item2SortDateA = new JMenuItem("Sort by Recent Release");
+        JMenuItem item2SortDateZ = new JMenuItem("Sort by Latest Release");
 
         item2.add(item2SortLetterA);
         item2SortLetterA.addActionListener(e ->
         {
-            JOptionPane.showMessageDialog(item2SortLetterA, "Not Implemented", "Warning", 0);
+            // JOptionPane.showMessageDialog(item2SortLetterA, "Not Implemented", "Warning", 0);
+            Collections.sort(game_titles, new VGcompareAZ());
         });
-
         item2.add(item2SortLetterZ);
         item2SortLetterZ.addActionListener(e ->
         {
-            JOptionPane.showMessageDialog(item2SortLetterZ, "Not Implemented", "Warning", 0);
+            // JOptionPane.showMessageDialog(item2SortLetterZ, "Not Implemented", "Warning", 0);
+            Collections.sort(game_titles, new VGcompareZA());
         });
 
         item2.add(item2SortPlatf);
         item2SortPlatf.addActionListener(e ->
         {
-            JOptionPane.showMessageDialog(item2SortPlatf, "Not Implemented", "Warning", 0);
+            // JOptionPane.showMessageDialog(item2SortPlatf, "Not Implemented", "Warning", 0);
+            Collections.sort(game_titles, new VGcompareP());
         });
 
         item2.add(item2SortDateA);
@@ -420,11 +547,13 @@ public class GameHub extends VideoGame
 
         // Search Initialization
         menBar.add(item3);
+        item3.setPreferredSize(new Dimension(50, item3.getPreferredSize().height));
+        item3.setMaximumSize(new Dimension(50, item3.getPreferredSize().height));
         item3.setHorizontalTextPosition(0);
+
         item3.addActionListener(e ->
         {
             String gameTitle = JOptionPane.showInputDialog(item3, "Enter a game TITLE to find");
-            selectedRow = 1;
 
             for (int i = 0; i < game_titles.size(); i++)
             {
@@ -496,7 +625,7 @@ public class GameHub extends VideoGame
         //numBeatImgCont.setBorder(BorderFactory.createEtchedBorder());
 
         // Table
-        String[] col_names = {"Title", "Beaten", "Favorite", "Currently Playing"}; // , "Platform", "Times Beaten"
+        String[] col_names = {"Title", "Beaten", "Favorite", "Currently Playing"};
         table_core.addColumn(col_names[0]);
         table_core.addColumn(col_names[1]);
         table_core.addColumn(col_names[2]);
@@ -504,11 +633,9 @@ public class GameHub extends VideoGame
 
         gameTable = new JTable(table_core)
         {
-            public boolean editCellAt(int row, int column, java.util.EventObject e)
-            {
-                return false;
-            }
+            public boolean editCellAt(int row, int column, java.util.EventObject e) { return false; }
         };
+
         gameTable.getTableHeader().setReorderingAllowed(false);
         gameTable.getTableHeader().setResizingAllowed(false);
 
@@ -523,7 +650,6 @@ public class GameHub extends VideoGame
             {
                 // Row Selection Per Click
                 selectedRow = gameTable.getSelectedRow();
-                System.out.println("Selected Row: " + selectedRow);
 
                 selectedLabelString = (selectedRow + ": " + game_titles.get(selectedRow).getTitle());
                 selectedLabel.setText(selectedLabelString);
