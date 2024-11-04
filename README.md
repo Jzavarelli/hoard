@@ -35,7 +35,7 @@ Git Bash
 <br />
 When using git repositories there may be a need for git to be installed to the computer. To install git navigate to the below website and install the git bash software, which will ask for many specific items to be installed. During the install, you will want to select all the recommended and default install pathways, but do not need to install any additional software that is offered. 
 <br />
-[Git Bash Link](https://www.git-scm.com/downloads)
+[Git Bash Link](https://www.git-scm.com/downloads).
 <br />
 <br />
 Game Archiver Installation
@@ -48,7 +48,7 @@ git clone https://github.com/Jzavarelli/hoard.git
 ```
 
 
-The above code will install LFS, a git tool that allows for large files to be easily transfered across the github platform. Then the clone will grab the most recent build of the current repository, which will allow you access to the following game archiver. The next step is then to create a shortcut of the **Game Archiver** jar file that is within the _hoard_ repository.
+The above code will install LFS, a git tool that allows for large files to be easily transfered across the github platform. Then the clone will grab the most recent build of the current repository, which will allow you access to the following game archiver. The next step is then to create a shortcut of the **Game Archiver** jar file that is within the __hoard__ repository.
 <br />
 **Do Not Move Any Items From The Repository** if you desire for the software to work, the early builds of the different programs in the repo depend on the file heirarchy. Once the shortcut is brought to the users desktop they can access and use the software easily.
 <br />
@@ -57,5 +57,8 @@ The above code will install LFS, a git tool that allows for large files to be ea
 ### Language: Python 3.1.1
 
 
-## C Software
-### Language: C
+## C# Software
+### Language: C#
+<br />
+Miniture code project focused on creating and running a small GUI interface. The interface will function with different tools that process HTTP request to show data about the players connection or general information.
+<br />
