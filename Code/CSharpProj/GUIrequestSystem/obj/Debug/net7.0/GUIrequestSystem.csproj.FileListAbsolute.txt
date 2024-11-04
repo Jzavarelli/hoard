@@ -1,0 +1,14 @@
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\bin\Debug\net7.0\GUIrequestSystem.exe
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\bin\Debug\net7.0\GUIrequestSystem.deps.json
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\bin\Debug\net7.0\GUIrequestSystem.runtimeconfig.json
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\bin\Debug\net7.0\GUIrequestSystem.dll
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\bin\Debug\net7.0\GUIrequestSystem.pdb
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\GUIrequestSystem.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\GUIrequestSystem.AssemblyInfoInputs.cache
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\GUIrequestSystem.AssemblyInfo.cs
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\GUIrequestSystem.csproj.CoreCompileInputs.cache
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\GUIrequestSystem.dll
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\refint\GUIrequestSystem.dll
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\GUIrequestSystem.pdb
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\GUIrequestSystem.genruntimeconfig.cache
+C:\Users\jlzav\Documents\Personal\program_env\repositories\hoard\Code\CSharpProj\GUIrequestSystem\obj\Debug\net7.0\ref\GUIrequestSystem.dll
